@@ -4,7 +4,7 @@ class << self
   # Point d'entrée
   # 
   def run
-    get_last_action if same?
+    get_last_action if same_command?
 
     action ||= CLI.main_command || choose_action || return
     methode = "action_#{action}".to_sym
@@ -12,17 +12,12 @@ class << self
     if self.respond_to?(methode)
       send(methode)
       # On mémorise la dernière action pour option -s/--same
-      set_last_action(action) unless same?
+      set_last_action(action) unless same_command?
     else
       puts "Je ne connais pas la commande #{action.inspect}. Mieux vaut ne rien mettre".rouge
     end
   end
 
-  def same?
-    :TRUE == @same_command ||= begin
-      (CLI.option(:same) || CLI.option(:s)) ? :TRUE : :FALSE
-    end
-  end
   
   def action_define
     require_relative '../modules/define'
@@ -49,6 +44,11 @@ class << self
     puts "Je dois apprendre à ouvrir l'image SVG de l'arbre".jaune
   end
 
+  def same_command?
+    :TRUE == @same_command ||= begin
+      (CLI.option(:same) || CLI.option(:s)) ? :TRUE : :FALSE
+    end
+  end
 
   def get_last_action
     if File.exist?(path_last_action)

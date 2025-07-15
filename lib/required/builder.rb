@@ -17,7 +17,7 @@ class Builder
   RANG_FULL     = RANG_HEIGHT + RANG_GUTTER
   CHILDREN_LINK_HEIGHT = 20
 
-  BLOCK_LEGEND = '<legend class="main" style="top:%ipx;left:%spx;">Arbre généalogique année %i</legend>'.freeze
+  BLOCK_LEGEND = '<legend class="main" style="top:%ipx;left:%spx;">Arbre généalogique %s</legend>'.freeze
 
 class << self
 
@@ -76,9 +76,7 @@ class << self
     end
 
     # La légende avec l'année, sous la table
-    last_top = 200
     code << build_legende
-
 
     File.write(path, avant + code.join("\n") + apres)
 
@@ -98,13 +96,17 @@ class << self
   # Construction de la légende
   def build_legende
     left = MAX_MESURES[:left] + (MAX_MESURES[:right] - MAX_MESURES[:left]) / 2 - 100
-    BLOCK_LEGEND % [MAX_MESURES[:top], left, ANNEE_REF]
+    ar = "ANNÉE #{ANNEE_REF}"
+    ar = "<strong>#{ar}</strong>" if ar != Time.now
+    BLOCK_LEGEND % [MAX_MESURES[:top], left, ar]
   end
 
   # Construction du bloc de personne
   def build_person_bloc(person)
+    class_css = ['people']
+    class_css << 'ghost' if person.not_borned?
     <<~HTML
-      <div class="people" style="top:#{person.top}px;left:#{person.left}px;">
+      <div class="#{class_css.join(' ')}" style="top:#{person.top}px;left:#{person.left}px;">
         <div class="name">#{person.f_patronyme}</div>
         <div class="dates">#{person.f_mark_dates}</div>
       </div>

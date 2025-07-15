@@ -14,6 +14,9 @@ div.people {
   align-content: center ;
   z-index: 10;
 }
+div.people.ghost {
+  opacity: 0.3;
+}
 div.people.main div.name {
   font-weight: bold;
 }

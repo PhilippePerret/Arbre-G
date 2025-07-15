@@ -44,6 +44,10 @@ class Genea::Person
     @is_built = true
   end
 
+  def not_borned?
+    naissance && naissance > Genea::Builder::ANNEE_REF
+  end
+
   def built?
     @is_built === true
   end
@@ -56,7 +60,17 @@ class Genea::Person
   # Date de naissance ou ?
   def f_mark_dates
     @f_mark_dates ||= begin
-      mark_mort = mort ? mort.to_s : "   "
+      mark_mort = 
+        if mort.is_a?(Integer)
+          if mort < Genea::Builder::ANNEE_REF
+            mort.to_s
+          else
+            '   '
+          end
+        else 
+          mort 
+        end
+
       mark_naissance = naissance ? naissance.to_s : " ? "
       mark_age = age ? "(#{age} ans)" : ""
 
@@ -170,7 +184,7 @@ class Genea::Person
         puts "Impossible de trouver le mari #{data['mari'].inspect}".rouge
       end
       if @mari.femme.nil?
-        puts "Femme de #{@mari.patronyme} mise à #{self.patronyme}".bleu
+        # puts "Femme de #{@mari.patronyme} mise à #{self.patronyme}".bleu
         @mari.femme = self
       elsif @mari.femme.id != self.id
         puts "La femme devrait avoir l'identifiant #{self.id}. Or c'est @mari.femme.id (je corrige).".rouge
@@ -184,10 +198,10 @@ class Genea::Person
         puts "Impossible de trouver la femme #{data['mari'].inspect}".rouge
       end
       if @femme.mari.nil?
-        puts "Mari de #{femme.patronyme} mis à #{self.patronyme}".bleu
+        # puts "Mari de #{femme.patronyme} mis à #{self.patronyme}".bleu
         @femme.mari = self
       elsif @femme.mari.id != self.id
-        puts "Le mari de la femme #{femme.patronyme} devait être #{self.patronyme} (je corrige).".rouge
+        # puts "Le mari de la femme #{femme.patronyme} devait être #{self.patronyme} (je corrige).".rouge
         @femme.mari = self
       end
     end
@@ -196,7 +210,7 @@ class Genea::Person
       # puts "data['pere'] = #{data['pere'].inspect}"
       @pere = Genea::Data.persons[data['pere']]
       unless @pere.enfants.include?(self)
-        puts "Ajout de l'enfant #{self.patronyme} au père #{pere.patronyme}".bleu
+        # puts "Ajout de l'enfant #{self.patronyme} au père #{pere.patronyme}".bleu
         @pere.enfants << self
       end
     end
@@ -204,7 +218,7 @@ class Genea::Person
     if data['mere']
       @mere   = Genea::Data.persons[data['mere']]
       unless @mere.enfants.include?(self)
-        puts "Ajout de l'enfant #{self.patronyme} à la mère #{mere.patronyme}".bleu
+        # puts "Ajout de l'enfant #{self.patronyme} à la mère #{mere.patronyme}".bleu
         @mere.enfants << self
       end
     end
@@ -228,10 +242,10 @@ class Genea::Person
       # possible
       .each do |p|
         if is_mari?
-          puts "Père de #{p.patronyme} mis à #{self.patronyme}".bleu
+          # puts "Père de #{p.patronyme} mis à #{self.patronyme}".bleu
           p.pere = self
         elsif is_femme?
-          puts "Mère de #{p.patronyme} mis à #{self.patronyme}".bleu
+          # puts "Mère de #{p.patronyme} mis à #{self.patronyme}".bleu
           p.mere = self
         end
       end
@@ -325,14 +339,12 @@ class Genea::Person
     @age ||= begin
       if naissance.nil? || naissance == '?'
         '?'
-      elsif mort
-        if mort.is_a?(Integer)
-          mort - naissance
-        else
-          '?'
-        end
+      elsif mort.is_a?(Integer) && mort < Genea::Builder::ANNEE_REF
+        mort - naissance
+      elsif mort.is_a?(String)
+        mort
       else
-        Time.now.year - naissance # TODO Plus tard en fonction du format de date de la naissance
+        Genea::Builder::ANNEE_REF - naissance # TODO Plus tard en fonction du format de date de la naissance
       end
     end
   end
