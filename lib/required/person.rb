@@ -48,6 +48,13 @@ class Genea::Person
     naissance && naissance > Genea::Builder::ANNEE_REF
   end
 
+  # L'année de l'arbre généalogique, la personne n'est peut-être pas
+  # encore marié
+  def not_maried_yet?
+    return false if conjoint.nil?
+    not_borned? || conjoint.not_borned? || (annee_mariage && annee_mariage > Genea::Builder::ANNEE_REF) || (age < 12)
+  end
+
   def built?
     @is_built === true
   end
@@ -294,6 +301,17 @@ class Genea::Person
     @mari = value
     @data.store('mari', value.id)
   end
+  def conjoint
+    @conjoint ||= begin
+      if is_mari?
+        femme
+      elsif is_femme?
+        mari
+      else
+        nil
+      end
+    end
+  end
   def pere; @pere end
   def pere=(value)
     @pere = value
@@ -333,6 +351,12 @@ class Genea::Person
   def mort=(value)
     @mort = @mort
     @data.store('mort', value)
+  end
+
+  def annee_mariage; @annee_mariage ||= data['annee_mariage'] end
+  def annee_mariage=(value)
+    @annee_mariage = value
+    @data.store('annee_mariage', value)
   end
 
   def age 

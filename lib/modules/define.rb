@@ -132,6 +132,8 @@ class Person
         self.naissance = choose_date("Année de naissance : ", :birth)
       when :mort 
         self.mort = choose_date("Année de décès : ", :death)
+      when :annee_mariage
+        self.annee_mariage = choose_date("Année de mariage : ", :mariage)
       when :mari
         good_one = self.class.choose_someone(but: self, as: :mari, quest: "le mari")
         if is_good_person?(good_one, :mari)
@@ -186,9 +188,12 @@ class Person
         quatre_chiffres = input =~ /^[0-9]{4}$/
         input = input.to_i
         good_for_other_date =
-          if type == :death
+          case type
+          when :annee_mariage 
+            (naissance.nil? || input >= naissance) && (mort.nil? || input <= mort)
+          when :death
             naissance.nil? || input >= naissance
-          elsif type == :birth
+          when :birth
             mort.nil? || input <= mort
           end
         quatre_chiffres && good_for_other_date
@@ -206,6 +211,7 @@ class Person
       {name: "Mort : #{mort.inspect}", value: :mort, default: nil},
       {name: "Mari : #{mari}", value: :mari, default: mari},
       {name: "Femme : #{femme}", value: :femme, default: femme},
+      {name: "Année de mariage: #{annee_mariage}", value: :annee_mariage, default: femme},
       {name: "Père : #{pere}", value: :pere, default: pere},
       {name: "Mère : #{mere}", value: :mere, default: mere},
       {name: "Enfants : #{enfants.count}", value: :enfants, default: []},

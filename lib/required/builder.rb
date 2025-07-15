@@ -117,13 +117,14 @@ class << self
   end
 
   # Construction du bloc de liaison entre mari et femme
-  TEMP_LINK_EPOUX = '<div class="hlink" style="top:%spx;left:%spx;width:%spx;"></div>'.freeze
+  TEMP_LINK_EPOUX = '<div class="hlink%s" style="top:%spx;left:%spx;width:%spx;"></div>'.freeze
   
   def build_epoux_link(mari)
-    TEMP_LINK_EPOUX % [mari.top + RANG_HEIGHT, mari.left + COL_WIDTH/2, COL_WIDTH - COL_GUTTER]
+    ghosted = mari.not_maried_yet? ? ' ghost' : ''
+    TEMP_LINK_EPOUX % [ghosted, mari.top + RANG_HEIGHT, mari.left + COL_WIDTH/2, COL_WIDTH - COL_GUTTER]
   end
 
-  TRAIT_TEMP = '<div class="trait" style="top:%spx;left:%spx;height:%spx;width:%spx;"></div>'.freeze
+  TRAIT_TEMP = '<div class="trait%s" style="top:%spx;left:%spx;height:%spx;width:%spx;"></div>'.freeze
 
   # Construction des traits si enfant
   # 1. Il y a un trait vertical entre les parents (todo: traiter l'adoption)
@@ -132,24 +133,30 @@ class << self
   def build_children_links(mari)
     enfants = mari.sorted_children
     ecount  = enfants.count
+    one_is_born = false
+    enfants.each do |p| 
+      one_is_born = true unless p.not_borned?
+    end
+    ghosted = one_is_born ? '' : ' ghost'
+
+    traits  = []
     # Trait 1
     top     = mari.top + RANG_HEIGHT + 25
     left    = mari.left + COL_WIDTH - COL_GUTTER / 2
     height  = CHILDREN_LINK_HEIGHT
-    traits = []
-    traits << TRAIT_TEMP % [top, left, height, 'auto']
+    traits << TRAIT_TEMP % [ghosted, top, left, height, 'auto']
     # Le Trait 2 (sauf si un seul enfant)
+    top   = top + height
     if ecount > 1
-      top   = top + height
       width = (ecount * 2 - 2) * COL_FULL #- COL_GUTTER
       left  = enfants[0].left + COL_WIDTH / 2
-      traits << TRAIT_TEMP % [top, left, 'auto', width]
+      traits << TRAIT_TEMP % [ghosted, top, left, 'auto', width]
     end
     # Les Traits 3
-    top += 2
+    top += 2 if ecount > 1
     height = CHILDREN_LINK_HEIGHT
     enfants.each do |p|
-      traits << TRAIT_TEMP % [top, left, height, 'auto']
+      traits << TRAIT_TEMP % [ghosted, top, left, height + 4, 'auto']
       left += COL_WIDTH * 2
     end
     return traits
