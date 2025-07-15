@@ -112,13 +112,16 @@ class Genea::Person
   def top
     @top ||= begin
       # puts "rang de #{self}: #{rang.inspect}"
-      rang * (Genea::Builder::RANG_HEIGHT + Genea::Builder::RANG_GUTTER)  
-    end
+      rang * Genea::Builder::RANG_FULL
+    end.tap {|val| Genea::Builder.set_max(:top, val + Genea::Builder::RANG_FULL)}
   end
   def left
     @left ||= begin
       # puts "col de #{self}: #{col.inspect}"
       col * Genea::Builder::COL_WIDTH    
+    end.tap do |val|
+      Genea::Builder.set_max(:left, val, :smaller)
+      Genea::Builder.set_max(:right, val)
     end
   end
 

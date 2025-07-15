@@ -4,18 +4,15 @@ class << self
   # Point d'entrée
   # 
   def run
-    action =
-    if CLI.option(:same) || CLI.option(:s) # la table ne fonctionne pas…
-      get_last_action
-    end
+    get_last_action if CLI.option(:same) || CLI.option(:s) # :same ne fonctionne pas…
 
     action ||= CLI.main_command || choose_action || return
     methode = "action_#{action}".to_sym
-    puts "Méthode: #{methode.inspect}".bleu
+    # puts "Méthode: #{methode.inspect}".bleu
     if self.respond_to?(methode)
       send(methode)
       # On mémorise la dernière action pour option -s/--same
-      set_last_action(action)
+      set_last_action(ARGV)
     else
       puts "Je ne connais pas la commande #{action.inspect}. Mieux vaut ne rien mettre".rouge
     end
@@ -26,7 +23,7 @@ class << self
     Genea::Define.define
   end
   def action_build
-    Builder.build
+    Builder.build(annee_reference: (CLI.params[:ar]||CLI.params[:annee_reference]||Time.now.year).to_i)
   end
   def action_open
     puts "Ouverture de l'arbre dans le navigateur…".bleu
@@ -49,11 +46,11 @@ class << self
 
   def get_last_action
     if File.exist?(path_last_action)
-      IO.read(path_last_action).strip
+      CLI.parse(Marshal.load(IO.read(path_last_action).strip))
     end
   end
   def set_last_action(code)
-    File.write(path_last_action, code)
+    File.write(path_last_action, Marshal.dump(code))
   end
   def path_last_action
     @path_last_action ||= File.join(APP_FOLDER, '.LASTACTION')
@@ -69,7 +66,7 @@ class << self
   ] + [{name: "Quitter".orange, value: nil}]
   def choose_action
     clear
-    Q.select("Action généalogique à accomplir : ".jaune, DATA_ACTIONS)
+    Q.select("Action généalogique à accomplir : ".jaune, DATA_ACTIONS, cycle: true)
   end
 end #/class << self
 end #/Genea

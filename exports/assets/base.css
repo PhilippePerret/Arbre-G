@@ -41,3 +41,11 @@ div.trait {
   min-width: 2px;
   min-height: 2px;
 }
+
+legend.main {
+  position: absolute;
+  width: 300px;
+  font-style: italic;
+  font-size: 14pt;
+  text-align: center;
+}

@@ -5,19 +5,33 @@ class Builder
   COLO_DEFAUT = 4
 
   STARTING_POINT = {rang: 4, col: 4}
+  # Pour conserver les mesures maximums (inauguré pour pouvoir 
+  # placer la légende qui indique l'année de l'arbre)
+  MAX_MESURES = {left: 10_000, right: 0, top: 0}
 
   COL_GUTTER    = 20
   COL_WIDTH     = 200  # Si changé, mettre div.people width à COL_WIDTH - COL_GUTTER
   COL_FULL = COL_WIDTH + COL_GUTTER
   RANG_GUTTER   = 65
   RANG_HEIGHT   = 100 # Si changé, 
-  RANG_FULL = RANG_HEIGHT + RANG_GUTTER
+  RANG_FULL     = RANG_HEIGHT + RANG_GUTTER
   CHILDREN_LINK_HEIGHT = 20
+
+  BLOCK_LEGEND = '<legend class="main" style="top:%ipx;left:%spx;">Arbre généalogique année %i</legend>'.freeze
 
 class << self
 
 
-  def build
+  ##
+  # Point d'entrée pour construire l'arbre généalogique
+  # 
+  # @params {Hash} params Paramètres pour la construction
+  #   :annee_reference] Année de référence. Par défaut, l'année cou-
+  #                     rante. Permet de produire l'arbre à une autre
+  #                     date que l'année courante.
+  def build(params = {})
+    # On définit l'année de référence
+    Genea::Builder.const_set('ANNEE_REF', params[:annee_reference])
     # On récupère les données
     data = Data.get
     # puts "data: #{data.inspect}"
@@ -61,8 +75,30 @@ class << self
       end
     end
 
+    # La légende avec l'année, sous la table
+    last_top = 200
+    code << build_legende
+
+
     File.write(path, avant + code.join("\n") + apres)
 
+  end
+
+  # Pour conserver la trace des valeurs maximale et minimale
+  # (utile pour placer la légende sous l'arbre)
+  def set_max(prop, value, ref = :greater)
+    case ref
+    when :greater
+      MAX_MESURES.store(prop, value) if MAX_MESURES[prop] < value
+    when :smaller
+      MAX_MESURES.store(prop, value) if MAX_MESURES[prop] > value
+    end
+  end
+
+  # Construction de la légende
+  def build_legende
+    left = MAX_MESURES[:left] + (MAX_MESURES[:right] - MAX_MESURES[:left]) / 2 - 100
+    BLOCK_LEGEND % [MAX_MESURES[:top], left, ANNEE_REF]
   end
 
   # Construction du bloc de personne
@@ -93,23 +129,20 @@ class << self
   # 3. Il y a autant de trait verticaux qu'il faut entre les enfants et le trait horizontal
   def build_children_links(mari)
     enfants = mari.sorted_children
+    ecount  = enfants.count
     # Trait 1
     top     = mari.top + RANG_HEIGHT + 25
     left    = mari.left + COL_WIDTH - COL_GUTTER / 2
     height  = CHILDREN_LINK_HEIGHT
     traits = []
     traits << TRAIT_TEMP % [top, left, height, 'auto']
-    # Le Trait 2
-    top   = top + height
-    ecount = enfants.count
+    # Le Trait 2 (sauf si un seul enfant)
     if ecount > 1
+      top   = top + height
       width = (ecount * 2 - 2) * COL_FULL #- COL_GUTTER
       left  = enfants[0].left + COL_WIDTH / 2
-    else
-      left = left - COL_WIDTH / 2
-      width = COL_WIDTH / 2 + 2
+      traits << TRAIT_TEMP % [top, left, 'auto', width]
     end
-    traits << TRAIT_TEMP % [top, left, 'auto', width]
     # Les Traits 3
     top += 2
     height = CHILDREN_LINK_HEIGHT
