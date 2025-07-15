@@ -4,7 +4,7 @@ class << self
   # Point d'entrée
   # 
   def run
-    get_last_action if CLI.option(:same) || CLI.option(:s) # :same ne fonctionne pas…
+    get_last_action if same?
 
     action ||= CLI.main_command || choose_action || return
     methode = "action_#{action}".to_sym
@@ -12,9 +12,15 @@ class << self
     if self.respond_to?(methode)
       send(methode)
       # On mémorise la dernière action pour option -s/--same
-      set_last_action(ARGV)
+      set_last_action(action) unless same?
     else
       puts "Je ne connais pas la commande #{action.inspect}. Mieux vaut ne rien mettre".rouge
+    end
+  end
+
+  def same?
+    :TRUE == @same_command ||= begin
+      (CLI.option(:same) || CLI.option(:s)) ? :TRUE : :FALSE
     end
   end
   
@@ -46,11 +52,13 @@ class << self
 
   def get_last_action
     if File.exist?(path_last_action)
-      CLI.parse(Marshal.load(IO.read(path_last_action).strip))
+      CLI.parse(Marshal.load(IO.read(path_last_action)))
     end
   end
-  def set_last_action(code)
-    File.write(path_last_action, Marshal.dump(code))
+  def set_last_action(action)
+    command = "#{action} #{CLI.options.map{|o|"-#{o}"}.join(' ')}".strip
+    command = "#{command} #{CLI.params.map{|p,v| "#{p}=#{v}"}.join(' ')}".strip
+    File.write(path_last_action, Marshal.dump(command))
   end
   def path_last_action
     @path_last_action ||= File.join(APP_FOLDER, '.LASTACTION')
