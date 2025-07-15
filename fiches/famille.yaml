@@ -1,0 +1,28 @@
+---
+YP:
+  patronyme: Yvonne Perret
+  naissance: 1920
+  mort: 1996
+  mari: RP
+  id: YP
+RP:
+  patronyme: Robert Perret
+  naissance: 1918
+  mort: 1998
+  femme: YP
+  id: RP
+  enfants:
+  - DP
+DP:
+  patronyme: Daniel Perret
+  pere: RP
+  naissance: 1938
+  mort: 2024
+  femme: MA
+  id: DP
+MA:
+  patronyme: Marie-Claire Accard
+  naissance: 1940
+  mort: 2024
+  mari: DP
+  id: MA

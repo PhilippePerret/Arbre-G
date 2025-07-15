@@ -1,0 +1,14 @@
+---
+
+PE:
+  patronyme: Le Père
+  femme: ME
+  naissance: 1980
+ME:
+  patronyme: La Mère
+  mari: PE
+  naissance: 1970
+  mort: 2010
+EN:
+  patronyme: Un Enfant
+  pere: PE

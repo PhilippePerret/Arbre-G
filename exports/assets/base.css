@@ -1,0 +1,43 @@
+body {
+  position: relative
+}
+div.people {
+  position: absolute;
+  top:  200px;
+  left: calc(200px + 200px);
+  width: 180px;
+  height: 100px;
+  border: 2px solid #888888;
+  background: white;
+
+  text-align: center;
+  align-content: center ;
+  z-index: 10;
+}
+div.people.main div.name {
+  font-weight: bold;
+}
+div.people div.name {
+  font-size: 16pt;
+  margin: 0.5em;
+}
+div.people div.dates {
+  font-size: 12pt
+}
+
+div.hlink {
+  position: absolute;
+  height: 25px;
+  border-width:  0 2px 2px 2px;
+  border-style: solid;
+  border-color: #888888;
+  background-color: transparent;
+  z-index: 0;
+}
+
+div.trait {
+  position: absolute;
+  background-color: #888888;
+  min-width: 2px;
+  min-height: 2px;
+}
