@@ -1,14 +1,19 @@
 ---
-
-PE:
-  patronyme: Le Père
-  femme: ME
-  naissance: 1980
-ME:
-  patronyme: La Mère
-  mari: PE
-  naissance: 1970
-  mort: 2010
-EN:
-  patronyme: Un Enfant
-  pere: PE
+persons:
+  PE:
+    patronyme: Le Père
+    femme: ME
+    naissance: 1980
+    id: PE
+    couleur: main fil
+  ME:
+    patronyme: La Mère
+    mari: PE
+    naissance: 1970
+    mort: 2010
+    id: ME
+  EN:
+    patronyme: Un Enfant
+    pere: PE
+    id: EN
+    couleur: main fil

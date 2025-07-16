@@ -205,7 +205,7 @@ class Genea::Person
     if data['femme']
       # puts "data['femme'] = #{data['femme'].inspect}"
       @femme = Genea::Data.persons[data['femme']] || begin
-        puts "Impossible de trouver la femme #{data['mari'].inspect}".rouge
+        puts "Impossible de trouver la femme #{data['femme'].inspect}".rouge
       end
       if @femme.mari.nil?
         # puts "Mari de #{femme.patronyme} mis à #{self.patronyme}".bleu
@@ -218,7 +218,9 @@ class Genea::Person
 
     if data['pere']
       # puts "data['pere'] = #{data['pere'].inspect}"
-      @pere = Genea::Data.persons[data['pere']]
+      @pere = Genea::Data.persons[data['pere']] || begin
+        puts "Impossible de trouver le père #{data['pere'].inspect}…".rouge
+      end 
       unless @pere.enfants.include?(self)
         # puts "Ajout de l'enfant #{self.patronyme} au père #{pere.patronyme}".bleu
         @pere.enfants << self
@@ -226,7 +228,9 @@ class Genea::Person
     end
 
     if data['mere']
-      @mere   = Genea::Data.persons[data['mere']]
+      @mere   = Genea::Data.persons[data['mere']] || begin
+        puts "Impossible de trouver la mère #{data['mere'].inspect}…".rouge
+      end        
       unless @mere.enfants.include?(self)
         # puts "Ajout de l'enfant #{self.patronyme} à la mère #{mere.patronyme}".bleu
         @mere.enfants << self
@@ -342,7 +346,7 @@ class Genea::Person
   # Attention : pas utilisé en mode définition 
   def id
     @id = nil if @id == ""
-    @id ||= data["id"] 
+    @id ||= data["id"] || patronyme.split(" ").map{|m|m[0].upcase}.join("")
   end
 
   def naissance; @naissance ||= data["naissance"] end
@@ -374,6 +378,12 @@ class Genea::Person
         Genea::Builder::ANNEE_REF - naissance # TODO Plus tard en fonction du format de date de la naissance
       end
     end
+  end
+
+  def couleur; @couleur ||= data['couleur'] end
+  def couleur=(val)
+    @couleur = val
+    data.store('couleur', val)
   end
 
   def main; @main ||= data["main"] end

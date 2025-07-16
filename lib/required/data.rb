@@ -5,8 +5,17 @@ class << self
   attr_reader :persons
   attr_reader :main_person
 
+  def annee_reference
+    @annee_reference ||= CLI.params[:ar] || CLI.params[:annee_reference] || Time.now.year
+  end
+
+  def fiche_genealogie
+    @fiche_genealogie ||= CLI.params[:fg] || CLI.params[:fiche_genealogie]
+  end
+
   # Charge la fiche généalogique de chemin d'accès +path+
   def load(path)
+    path_ini = path.freeze
     path =
       if File.exist?(path)
         path
@@ -16,8 +25,13 @@ class << self
           path
         elsif File.exist?(path = File.join(Genea::FICHES_FOLDER, path))
           path
+        else
+          raise "💣 Impossible de trouver la fiche #{path_ini.inspect}"
         end
       end
+    # Puisque la fiche généalogique existe, on la met en mémoire
+    Genea::LastAction.save(fiche: path_ini)
+    # Et on charge les données
     self.path = path
     self.get
   end
@@ -42,19 +56,32 @@ class << self
     end
   end
 
+  # Sauvegarde de toutes les données
+  def save(persons: @persons, couleurs: Genea::Color::COLORS)
+    content = {
+      persons: persons,
+      colors:  couleurs
+    }
+    File.write(path, YAML.dump(content))
+  end
+
   # @return une liste des instances Genea::Personn entièrmenent 
   # préparée et vérifiée.
   def get
     @persons = {}
-    YAML.safe_load(IO.read(path, **Genea::YAML_OPTIONS))
-    .map do |pid, pdata|
-      pdata.store("id", pid)
-      # puts  "pdata: #{pdata}"
-      Genea::Person.new(pdata).tap do |p| 
+    YAML.safe_load(IO.read(path, **Genea::YAML_OPTIONS))['persons']
+    .map do |pid, dperso|
+      dperso.store('id', pid)
+      Genea::Person.new(dperso).tap do |p| 
         @persons.store(p.id, p)
         @main_person = p if p.main?
       end
     end
+    # .tap do |persos| 
+    #   puts "PERSOS: #{persos.inspect}"
+    #   puts "@persons : #{@persons.inspect}"
+    #   raise "Pour voir"
+    # end
     .map do |person|
       # Si la personne définit des relatifs, on doit mettre cette
       # personne dans ses relatifs (et prévenir les erreurs)

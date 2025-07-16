@@ -1,84 +1,84 @@
 ---
 # Fiche définissant la généalogie
+persons:
+  GA:
+    patronyme: "Gabriel Faivre"
+    naissance: 2022 (02)
+    mort: 2023 (02)
+    mere: OF
+    pere: XF
 
-GA:
-  patronyme: "Gabriel Faivre"
-  naissance: 2022 (02)
-  mort: 2023 (02)
-  mere: OF
-  pere: XF
+  OF:
+    main: true
+    patronyme: "Océane Faivre"
+    nom_jf: Boissière
+    naissance: 2001
+    pere: NB
+    mere: MB
+    mari: XF
 
-OF:
-  main: true
-  patronyme: "Océane Faivre"
-  nom_jf: Boissière
-  naissance: 2001
-  pere: NB
-  mere: MB
-  mari: XF
+  NB:
+    patronyme: Nicolas Boissière
+    naissance: 1980
+    femme: FB
 
-NB:
-  patronyme: Nicolas Boissière
-  naissance: 1980
-  femme: FB
+  FB:
+    patronyme: Valérie Boissière
+    naissance: 1979
+    mari: NB
+    
+  MB:
+    patronyme: Martine Boissière
+    naissance: 1953
+    mari: VV
+    pere: AM
+    mere: YY
 
-FB:
-  patronyme: Valérie Boissière
-  naissance: 1979
-  mari: NB
-  
-MB:
-  patronyme: Martine Boissière
-  naissance: 1953
-  mari: VV
-  pere: AM
-  mere: YY
+  AM:
+    patronyme: André Morel
+    naissance: 1923
+    mere: MF
+    pere: LM
+    enfants: [MB, XX]
 
-AM:
-  patronyme: André Morel
-  naissance: 1923
-  mere: MF
-  pere: LM
-  enfants: [MB, XX]
+  MF:
+    patronyme: Marguerite Faivre
+    narissance: 1901
+    mort: 1923
+    cause_mort: "Morte en accouchant de André Morel"
+    mari: LM
+    note: Point de départ
 
-MF:
-  patronyme: Marguerite Faivre
-  narissance: 1901
-  mort: 1923
-  cause_mort: "Morte en accouchant de André Morel"
-  mari: LM
-  note: Point de départ
+  LM:
+    patronyme: Louis Morel
+    naissance: 1901
+    femme: MF
+    pere:
+    mere: 
 
-LM:
-  patronyme: Louis Morel
-  naissance: 1901
-  femme: MF
-  pere:
-  mere: 
+  XF:
+    patronyme: Xevin Faivre
+    naissance: 2000
+    femme: OF
+    pere: 
+    mere:
 
-XF:
-  patronyme: Xevin Faivre
-  naissance: 2000
-  femme: OF
-  pere: 
-  mere:
+  # Ça pourrait être une cousine
+  XX:
+    patronyme: ???
+    mort: 1973
+    note: "Mort par noyade, 50 après Marguerite Faivre MG et 50 ans avant Gabriel"
+    naissance: 1945
+    pere: AM
+    mere: 
 
-# Ça pourrait être une cousine
-XX:
-  patronyme: ???
-  mort: 1973
-  note: "Mort par noyade, 50 après Marguerite Faivre MG et 50 ans avant Gabriel"
-  naissance: 1945
-  pere: AM
-  mere: 
+  # Mère de Martine Boissière
+  YY:
+    patronyme: "?"
 
-# Mère de Martine Boissière
-YY:
-  patronyme: "?"
-
-# Mari de Martine
-VV: 
-  patronyme: "Daniel Vancouvert"
-  naissance: 1950
-  mort: 2013
-  femme: MB
+  # Mari de Martine
+  VV: 
+    patronyme: "Daniel Vancouvert"
+    naissance: 1950
+    mort: 2013
+    femme: MB

@@ -9,15 +9,19 @@ class << self
   # 
   def define
     # Année de référence
-    Genea::Builder.const_set('ANNEE_REF', Time.now.year)
+    Genea::Builder.const_set('ANNEE_REF', Genea::Data.annee_reference)
 
-    if Q.yes?("Dois-je repartir d'une généalogie existant ?".jaune)
-      @persons = Genea::Data.ask_and_load_fiche
+    if CLI.params[:fg]
+      Genea::Data.load(CLI.params[:fg])
     else
-      fiche_name = Q.ask("Nom de la fiche", default: 'nouvelle_fiche')
-      Genea::Data.path= File.join(Genea::FICHES_FOLDER, "#{fiche_name}.yaml")
-      @persons = {}
-      define_a_person
+      if Q.yes?("Dois-je repartir d'une généalogie existant ?".jaune)
+        @persons = Genea::Data.ask_and_load_fiche
+      else
+        fiche_name = Q.ask("Nom de la fiche", default: 'nouvelle_fiche')
+        Genea::Data.path= File.join(Genea::FICHES_FOLDER, "#{fiche_name}.yaml")
+        @persons = {}
+        define_a_person
+      end
     end
 
     choices = update_persons_choices(@persons)
@@ -48,7 +52,7 @@ class << self
   def save(lespersons)
     hashpersons = {}
     lespersons.values.each {|p| hashpersons.store(p.id, p.data)}
-    File.write(Genea::Data.path, YAML.dump(hashpersons))
+    Genea::Date.save(persons: hashpersons)
   end
 
   def update_persons_choices(lespersons)
@@ -110,13 +114,6 @@ class Person
 
   end #/class << self
 
-  def id
-    @id = nil if @id == ""
-    @id ||= begin
-      patronyme.split(" ").map{|m|m[0].upcase}.join("")
-    end
-  end
-
   # Grande méthode pour définir les valeurs de la personne
   def define
     clear
@@ -130,6 +127,8 @@ class Person
         self.naissance = choose_date("Année de naissance : ", :birth)
       when :mort 
         self.mort = choose_date("Année de décès : ", :death)
+      when :couleur
+        self.couleur = Genea::Color.choose(prompt: "Couleur pour #{patronyme}", default: couleur)
       when :annee_mariage
         self.annee_mariage = choose_date("Année de mariage : ", :mariage)
       when :mari
@@ -213,6 +212,7 @@ class Person
       {name: "Père : #{pere}", value: :pere, default: pere},
       {name: "Mère : #{mere}", value: :mere, default: mere},
       {name: "Enfants : #{enfants.count}", value: :enfants, default: []},
+      {name: "Couleur: #{couleur}", value: :couleur, default: nil},
       {name: "Note : #{@note.inspect}", value: :note},
       {name: "Cause de la mort : #{@death_cause.inspect}", value: :death_cause},
       {name: "Finir".orange, value: nil}

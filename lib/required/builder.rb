@@ -32,10 +32,16 @@ class << self
   def build(params = {})
     # On définit l'année de référence
     unless defined?(ANNEE_REF)
-      Genea::Builder.const_set('ANNEE_REF', params[:annee_reference])
+      Genea::Builder.const_set('ANNEE_REF', Genea::Data.annee_reference)
     end
+
     # On récupère les données
-    data = Data.get
+    data =
+      if Genea::Data.fiche_genealogie
+        Data.load(Genea::Data.fiche_genealogie)
+      else
+        Data.get
+      end
 
     main_person = Data.get_main_person
     main_person.rang  = STARTING_POINT[:rang]

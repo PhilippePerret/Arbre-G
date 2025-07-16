@@ -4,15 +4,17 @@ class << self
   # Point d'entrée
   # 
   def run
-    get_last_action if same_command?
+    LastAction.load if same_command?
 
     action ||= CLI.main_command || choose_action || return
+    fichegene = CLI.params[:fg]
+    anneeref  = CLI.params[:ar]
     methode = "action_#{action}".to_sym
     # puts "Méthode: #{methode.inspect}".bleu
     if self.respond_to?(methode)
       send(methode)
       # On mémorise la dernière action pour option -s/--same
-      set_last_action(action) unless same_command?
+      LastAction.save(action: action, fiche: fichegene, annee: anneeref, options: CLI.options) unless same_command?
     else
       puts "Je ne connais pas la commande #{action.inspect}. Mieux vaut ne rien mettre".rouge
     end
@@ -24,7 +26,7 @@ class << self
     Genea::Define.define
   end
   def action_build
-    Builder.build(annee_reference: (CLI.params[:ar]||CLI.params[:annee_reference]||Time.now.year).to_i)
+    Builder.build
   end
   def action_open
     puts "Ouverture de l'arbre dans le navigateur…".bleu
@@ -48,20 +50,6 @@ class << self
     :TRUE == @same_command ||= begin
       (CLI.option(:same) || CLI.option(:s)) ? :TRUE : :FALSE
     end
-  end
-
-  def get_last_action
-    if File.exist?(path_last_action)
-      CLI.parse(Marshal.load(IO.read(path_last_action)))
-    end
-  end
-  def set_last_action(action)
-    command = "#{action} #{CLI.options.map{|o|"-#{o}"}.join(' ')}".strip
-    command = "#{command} #{CLI.params.map{|p,v| "#{p}=#{v}"}.join(' ')}".strip
-    File.write(path_last_action, Marshal.dump(command))
-  end
-  def path_last_action
-    @path_last_action ||= File.join(APP_FOLDER, '.LASTACTION')
   end
 
   DATA_ACTIONS = [
