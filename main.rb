@@ -1,6 +1,9 @@
 
 
 begin
+  # Dossier dans lequel a été appelée la commande
+  # Ne sert à rien pour le moment
+  CUR_FOLDER = ARGV.shift
   require_relative 'lib/required'
   Genea.run
 rescue Exception => e
