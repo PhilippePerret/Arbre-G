@@ -342,6 +342,9 @@ class Genea::Person
     @data['enfants'] ||= []
     @data['enfants'] << person.id
   end
+  def remove_from_enfants(enfant)
+    @enfants.delete_if { |p| p.id == enfant.id }
+  end
 
   # Attention : pas utilisé en mode définition 
   def id

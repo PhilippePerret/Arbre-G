@@ -26,7 +26,8 @@ class << self
         elsif File.exist?(path = File.join(Genea::FICHES_FOLDER, path))
           path
         else
-          raise "💣 Impossible de trouver la fiche #{path_ini.inspect}"
+          puts "💣 Impossible de trouver la fiche #{path_ini.inspect}".rouge
+          return nil
         end
       end
     # Puisque la fiche généalogique existe, on la met en mémoire
@@ -38,7 +39,7 @@ class << self
 
   # Permet de demander de choisir une fiche
   # 
-  # ATTENTION ! Doit absolument retourner la table des personnes
+  # ATTENTION ! Doit absolument retourner la table des personnes ou NIL
   # 
   def ask_and_load_fiche
     choices = 
@@ -50,7 +51,7 @@ class << self
       ]
     case choix = Q.select("Quelle fiche ?".jaune, choices, per_page: choices.count, cycle: true)
     when NilClass
-      load Q.ask("Chemin d'accès à la fiche : ".jaune)
+      load( Q.ask("Chemin d'accès à la fiche : ".jaune))
     else choix
       load(choix)
     end
@@ -105,7 +106,12 @@ class << self
   # Maintenant, on prend toujours le plus vieux
   # 
   def get_main_person
-    persons.values.sort_by { |p| p.naissance || 0 }.pop
+    persons.values.sort_by do |p| 
+      p.naissance || 0
+    end
+    # Pour afficher les personnes dans l'ordre
+    # .tap { |sorted| sorted.each { |perso| puts "#{perso}"}}
+    .shift
   end
 
   # Nom du fichier de généalogie
@@ -123,8 +129,8 @@ class << self
   def path
     # @path ||= File.join(Genea::FICHES_FOLDER, 'simple.yaml') # TODO Pouvoir la régler
     @path ||= begin
-      ask_and_load_fiche
-      @path # un peu tordu, mais bon…
+      ask_and_load_fiche || return
+      @path # un peu tordu, mais bon… (c'est ask_and_load_fiche mais le définit)
     end
   end
 end #/class << self

@@ -62,6 +62,7 @@ class << self
 
     Genea::Person.reset
     Genea::Person.put(main_person)
+    puts "main_person est #{main_person}"
     while (person = Genea::Person.shift)
       puts "Traitement de #{person.patronyme}".jaune
       person.add_to_arbre(code)

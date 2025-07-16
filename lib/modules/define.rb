@@ -14,8 +14,8 @@ class << self
     if CLI.params[:fg]
       Genea::Data.load(CLI.params[:fg])
     else
-      if Q.yes?("Dois-je repartir d'une généalogie existant ?".jaune)
-        @persons = Genea::Data.ask_and_load_fiche
+      if Q.yes?("Dois-je repartir d'une généalogie existante ?".jaune)
+        @persons = Genea::Data.ask_and_load_fiche || return
       else
         fiche_name = Q.ask("Nom de la fiche", default: 'nouvelle_fiche')
         Genea::Data.path= File.join(Genea::FICHES_FOLDER, "#{fiche_name}.yaml")
@@ -133,25 +133,38 @@ class Person
         self.annee_mariage = choose_date("Année de mariage : ", :mariage)
       when :mari
         good_one = self.class.choose_someone(but: self, as: :mari, quest: "le mari")
-        if is_good_person?(good_one, :mari)
+        if good_one.nil?
+          self.mari.femme = nil unless self.mari.nil?
+          self.mari = nil
+        elsif is_good_person?(good_one, :mari)
           self.mari = good_one 
           good_one.femme = self
         end
       when :femme
         good_one = self.class.choose_someone(but: self, as: :femme, quest: "la femme")
-        if is_good_person?(good_one, :femme)
+        if good_one.nil?
+          self.femme.mari = nil unless self.femme.nil?
+          self.femme = nil
+        elsif is_good_person?(good_one, :femme)
           self.femme = good_one
           good_one.mari = self
         end
       when :pere
         good_one = self.class.choose_someone(but: self, as: :pere, quest: "le père")
-        if is_good_person?(good_one, :pere)
+        if good_one.nil?
+          # Le père était défini et il est supprimé
+          self.pere.remove_from_enfants(self) unless self.pere.nil?
+          self.pere = nil
+        elsif is_good_person?(good_one, :pere)
           self.pere = good_one
           good_one.add_enfant(self)
         end
       when :mere
         good_one = self.class.choose_someone(but: self, as: :mere, quest: "la mère")
-        if is_good_person?(good_one, :mere)
+        if good_one.nil? 
+          self.mere.remove_from_enfants(self) unless self.mere.nil?
+          self.mere = nil
+        elsif is_good_person?(good_one, :mere)
           self.mere = good_one
           good_one.add_enfant(self)
         end

@@ -48,12 +48,14 @@ persons:
     enfants:
     - GF
     mari: XF
+    couleur: Main
   GF:
     patronyme: Gabriel Faivre
     naissance: 2022
     mort: 2023
     mere: OB
     id: GF
+    couleur: Main
   XF:
     patronyme: Xavier Faivre
     naissance: 2001
@@ -71,3 +73,6 @@ persons:
     naissance: 1938
     mort: 2024
     femme: MM
+    id: DB
+colors:
+  Main: CCCFFF
