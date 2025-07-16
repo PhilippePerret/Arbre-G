@@ -119,11 +119,17 @@ class << self
   end
 
   # Construction du bloc de liaison entre mari et femme
-  TEMP_LINK_EPOUX = '<div class="hlink%s" style="top:%spx;left:%spx;width:%spx;"></div>'.freeze
+  TEMP_LINK_EPOUX = '<div class="hlink%s" style="top:%spx;left:%spx;width:%spx;"><span class="annee">%s</span></div>'.freeze
   
   def build_epoux_link(mari)
     ghosted = mari.not_maried_yet? ? ' ghost' : ''
-    TEMP_LINK_EPOUX % [ghosted, mari.top + RANG_HEIGHT, mari.left + COL_WIDTH/2, COL_WIDTH - COL_GUTTER]
+    TEMP_LINK_EPOUX % [
+      ghosted, 
+      mari.top + RANG_HEIGHT, 
+      mari.left + COL_WIDTH/2, 
+      COL_WIDTH - COL_GUTTER,
+      mari.annee_mariage || ""
+    ]
   end
 
   TRAIT_TEMP = '<div class="trait%s" style="top:%spx;left:%spx;height:%spx;width:%spx;"></div>'.freeze

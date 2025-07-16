@@ -39,6 +39,15 @@ div.hlink {
   background-color: transparent;
   z-index: 0;
 }
+/* Affichage de la date de mariage */
+div.hlink span.annee {
+  display: inline-block;
+  position: absolute;
+  bottom: 0;
+  text-align:center;
+  width: 100%;
+  font-size: 0.9em;
+}
 
 div.trait {
   position: absolute;
