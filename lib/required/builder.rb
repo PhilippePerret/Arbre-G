@@ -36,16 +36,8 @@ class << self
     end
     # On récupère les données
     data = Data.get
-    # puts "data: #{data.inspect}"
 
-    main_person = 
-    if Data.main_person
-      Data.main_person
-    else
-      puts "Il faut définir la personne principale (en mettant sa propriété `main' à true). Par défaut, je prends la première.".orange
-      Data.persons.values.first
-    end
-
+    main_person = Data.get_main_person
     main_person.rang  = STARTING_POINT[:rang]
     main_person.col   = STARTING_POINT[:col]
 
@@ -82,6 +74,7 @@ class << self
 
     File.write(path, avant + code.join("\n") + apres)
 
+    puts "🍺 Arbre généalogique construit avec succès.".vert
   end
 
   # Pour conserver la trace des valeurs maximale et minimale

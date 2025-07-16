@@ -40,11 +40,24 @@ class << self
       # personne dans ses relatifs (et prévenir les erreurs)
       person.affect_relatives
     end
-    puts "@main_person dans data : #{@main_person}"
+    # puts "@main_person dans data : #{@main_person}"
 
     return @persons
   end
 
+  # @return la "main" personne, c'est-à-dire la personne de laquelle 
+  # on commence l'arbre (ça peut influencer son apparence)
+  # Soit on détermine expliciement qui elle est en lui mettant une
+  # propriété :main à True, soit on prend la plus vieille.
+  def get_main_person
+    if main_person
+      main_person
+    else
+      persons.values.sort_by { |p| p.naissance || 0 }.shift
+    end
+  end
+
+  # Nom du fichier de généalogie
   def fname
     @fname ||= File.basename(path)
   end
