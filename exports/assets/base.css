@@ -6,6 +6,12 @@ body {
   opacity: 0.3;
 }
 
+div#bloc_repositionnement {
+  position: absolute;
+  margin: 2em;
+  width: 100%;
+  height: calc(100%);
+}
 div.people {
   position: absolute;
   top:  200px;

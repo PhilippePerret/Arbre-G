@@ -7,7 +7,7 @@ class Builder
   STARTING_POINT = {rang: 4, col: 4}
   # Pour conserver les mesures maximums (inauguré pour pouvoir 
   # placer la légende qui indique l'année de l'arbre)
-  MAX_MESURES = {left: 10_000, right: 0, top: 0}
+  MAX_MESURES = {left: 10_000, right: 0, top: 10_000, bottom: 0}
 
   COL_GUTTER    = 20
   COL_WIDTH     = 200  # Si changé, mettre div.people width à COL_WIDTH - COL_GUTTER
@@ -72,7 +72,7 @@ class << self
     # La légende avec l'année, sous la table
     code << build_legende
 
-    File.write(path, avant + code.join("\n") + apres)
+    File.write(path, avant + block_repositionnement_in + code.join("\n") + '</div>' + apres)
 
     puts "🍺 Arbre généalogique construit avec succès.".vert
   end
@@ -88,12 +88,23 @@ class << self
     end
   end
 
+  # Construction du bloc de repositionnement (seulement sa balise 
+  # d'ouverture)
+  # C'est un bloc qui vise à repositionner l'arbre dans la fenêtre
+  # afin qu'il soit bien en haut à droite.
+  BLOCK_REPO_TEMP = '<div id="bloc_repositionnement" style="top:%spx;left:%spx;">'
+  def block_repositionnement_in
+    top   = -MAX_MESURES[:top]
+    left  = -MAX_MESURES[:left]
+    BLOCK_REPO_TEMP % [top, left]
+  end
+
   # Construction de la légende
   def build_legende
     left = MAX_MESURES[:left] + (MAX_MESURES[:right] - MAX_MESURES[:left]) / 2 - 100
     ar = "ANNÉE #{ANNEE_REF}"
     ar = "<strong>#{ar}</strong>" if ar != Time.now
-    BLOCK_LEGEND % [MAX_MESURES[:top], left, ar]
+    BLOCK_LEGEND % [MAX_MESURES[:bottom], left, ar]
   end
 
   # Construction du bloc de personne
