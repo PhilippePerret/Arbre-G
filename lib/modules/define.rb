@@ -8,7 +8,9 @@ class << self
   # Point d'entrée
   # 
   def define
-    
+    # Année de référence
+    Genea::Builder.const_set('ANNEE_REF', Time.now.year)
+
     if Q.yes?("Dois-je repartir d'une généalogie existant ?".jaune)
       @persons = Genea::Data.load(ask_for_fiche || return)
     else
@@ -189,7 +191,7 @@ class Person
         input = input.to_i
         good_for_other_date =
           case type
-          when :annee_mariage 
+          when :mariage
             (naissance.nil? || input >= naissance) && (mort.nil? || input <= mort)
           when :death
             naissance.nil? || input >= naissance

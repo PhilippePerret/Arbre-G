@@ -31,7 +31,9 @@ class << self
   #                     date que l'année courante.
   def build(params = {})
     # On définit l'année de référence
-    Genea::Builder.const_set('ANNEE_REF', params[:annee_reference])
+    unless defined?(ANNEE_REF)
+      Genea::Builder.const_set('ANNEE_REF', params[:annee_reference])
+    end
     # On récupère les données
     data = Data.get
     # puts "data: #{data.inspect}"

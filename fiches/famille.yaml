@@ -21,6 +21,7 @@ DP:
   mort: 2024
   femme: MA
   id: DP
+  annee_mariage: 1960
 MA:
   patronyme: Marie-Claire Accard
   naissance: 1940
