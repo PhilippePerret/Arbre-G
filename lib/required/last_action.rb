@@ -2,6 +2,7 @@ class Genea::LastAction
 class << self
 
   def save(action: nil, fiche: nil, annee: nil, options: {})
+    return if Genea.same_command?
     @action   = action unless action.nil?
     @fiche    = fiche  unless fiche. nil?
     @annee    = annee  unless annee.nil?
@@ -12,7 +13,7 @@ class << self
     command << "fg=#{@fiche}" unless @fiche.nil?
     command << "ar=#{@annee}" unless @annee.nil?
     command = command.compact.join(' ')
-    puts "Commande mémorisée : #{command.inspect}"
+    # puts "Commande mémorisée : #{command.inspect}"
     File.write(path, Marshal.dump(command))
   end
 

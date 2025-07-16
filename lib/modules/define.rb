@@ -52,7 +52,7 @@ class << self
   def save(lespersons)
     hashpersons = {}
     lespersons.values.each {|p| hashpersons.store(p.id, p.data)}
-    Genea::Date.save(persons: hashpersons)
+    Genea::Data.save(persons: hashpersons)
   end
 
   def update_persons_choices(lespersons)

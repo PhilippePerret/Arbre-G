@@ -52,6 +52,10 @@ class << self
     end
   end
 
+  def debug?
+    :TRUE == @debug_it ||= CLI.option(:debug) ? :TRUE : :FALSE
+  end
+
   DATA_ACTIONS = [
     {name: "Définir la généalogie [define]", value: :define},
     {name: "Construire l'arbre généalogique [build]", value: :build},

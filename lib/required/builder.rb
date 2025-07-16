@@ -30,18 +30,24 @@ class << self
   #                     rante. Permet de produire l'arbre à une autre
   #                     date que l'année courante.
   def build(params = {})
+
+    Genea::LastAction.save(action: 'build')
+
     # On définit l'année de référence
     unless defined?(ANNEE_REF)
       Genea::Builder.const_set('ANNEE_REF', Genea::Data.annee_reference)
     end
 
-    # On récupère les données
+    # On récupère les données des personnes
     data =
       if Genea::Data.fiche_genealogie
         Data.load(Genea::Data.fiche_genealogie)
       else
         Data.get
       end
+
+    # On charge les données couleur
+    Genea::Color.load
 
     main_person = Data.get_main_person
     main_person.rang  = STARTING_POINT[:rang]
@@ -118,7 +124,7 @@ class << self
     class_css = ['people']
     class_css << 'ghost' if person.not_borned?
     <<~HTML
-      <div class="#{class_css.join(' ')}" style="top:#{person.top}px;left:#{person.left}px;">
+      <div class="#{class_css.join(' ')}" style="top:#{person.top}px;left:#{person.left}px;background-color:##{Genea::Color.get(person.couleur)||'white'};">
         <div class="name">#{person.f_patronyme}</div>
         <div class="dates">#{person.f_mark_dates}</div>
       </div>
@@ -126,6 +132,7 @@ class << self
     HTML
   rescue Exception => e
     puts "ERREUR SURVENUE AVEC #{person} : #{e.message}".rouge
+    puts e.backtrace.join("\n").rouge if Genea.debug?
   end
 
   # Construction du bloc de liaison entre mari et femme

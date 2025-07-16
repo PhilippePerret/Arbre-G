@@ -5,7 +5,7 @@ persons:
     femme: ME
     naissance: 1980
     id: PE
-    couleur: main fil
+    couleur: Main
   ME:
     patronyme: La Mère
     mari: PE
@@ -16,4 +16,6 @@ persons:
     patronyme: Un Enfant
     pere: PE
     id: EN
-    couleur: main fil
+    couleur: Main
+colors:
+  Main: FFA6A6

@@ -7,6 +7,11 @@ class Genea::Color
   COLORS = {}
 class << self
 
+  # @return La couleur "HHHHHH" d'identifiant {String} +color_id+
+  def get(color_id)
+    COLORS[color_id]
+  end
+
   # @return le nom de la couleur choisie
   def choose(prompt: "Couleur", default: nil)
     choices = COLORS.map do |name, color|
@@ -23,6 +28,18 @@ class << self
     else 
       return choix
     end
+  end
+
+  def load
+    reset
+    (Genea::Data.get_yaml_data['colors'] || {})
+    .each do |color_id, color|
+      COLORS.store(color_id, color)
+    end
+  end
+
+  def reset
+    COLORS.clear
   end
 
   # Point d'entrée pour définir une couleur particulière
@@ -50,7 +67,7 @@ class << self
   end
 
   def save
-    puts "Je dois apprendre à sauver les couleurs dans le fichier"
+    Genea::Data.save(couleurs: COLORS)
   end
 
 end #/class << self

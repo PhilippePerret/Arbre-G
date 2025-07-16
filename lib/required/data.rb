@@ -42,12 +42,12 @@ class << self
   # 
   def ask_and_load_fiche
     choices = 
-    Dir["#{Genea::FICHES_FOLDER}/*.yaml"].map do |path|
-      fname = File.basename(path, File.extname(path))
-      {name: fname.gsub(/_/, ' '), value: fname}
-    end + [
-      {name: "Autre fiche…", value: nil}
-    ]
+      Dir["#{Genea::FICHES_FOLDER}/*.yaml"].map do |path|
+        fname = File.basename(path, File.extname(path))
+        {name: fname.gsub(/_/, ' '), value: fname}
+      end + [
+        {name: "Autre fiche…", value: nil}
+      ]
     case choix = Q.select("Quelle fiche ?".jaune, choices, per_page: choices.count, cycle: true)
     when NilClass
       load Q.ask("Chemin d'accès à la fiche : ".jaune)
@@ -58,18 +58,23 @@ class << self
 
   # Sauvegarde de toutes les données
   def save(persons: @persons, couleurs: Genea::Color::COLORS)
+    raise if persons.nil? || persons.empty?
     content = {
-      persons: persons,
-      colors:  couleurs
+      'persons' => persons,
+      'colors'  => couleurs
     }
     File.write(path, YAML.dump(content))
   end
 
+  def get_yaml_data
+    YAML.safe_load(IO.read(path, **Genea::YAML_OPTIONS))
+  end
   # @return une liste des instances Genea::Personn entièrmenent 
   # préparée et vérifiée.
   def get
     @persons = {}
-    YAML.safe_load(IO.read(path, **Genea::YAML_OPTIONS))['persons']
+
+    get_yaml_data['persons']
     .map do |pid, dperso|
       dperso.store('id', pid)
       Genea::Person.new(dperso).tap do |p| 
@@ -96,12 +101,11 @@ class << self
   # on commence l'arbre (ça peut influencer son apparence)
   # Soit on détermine expliciement qui elle est en lui mettant une
   # propriété :main à True, soit on prend la plus vieille.
+  # 
+  # Maintenant, on prend toujours le plus vieux
+  # 
   def get_main_person
-    if main_person
-      main_person
-    else
-      persons.values.sort_by { |p| p.naissance || 0 }.shift
-    end
+    persons.values.sort_by { |p| p.naissance || 0 }.pop
   end
 
   # Nom du fichier de généalogie
