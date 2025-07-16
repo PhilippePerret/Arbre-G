@@ -24,6 +24,15 @@ class Genea::Person
       @all.shift
     end
 
+    # @return la personnne ou Nil si elle n'existe pas
+    def get(person_id)
+      Genea::Data.persons[person_id]
+    end
+
+    def exists?(person_id)
+      !Genea::Data.persons[person_id].nil?
+    end
+
   end #/class << self
 
 
@@ -290,11 +299,13 @@ class Genea::Person
   end
   def patronyme
     @patronyme ||= begin
-      mots = (data['patronyme']||"").split(" ")
-      nom  = (mots.pop||"").upcase
-      prenom = mots.join(" ")
-      @f_patronyme = "#{prenom}<br>#{nom}".strip
-      "#{prenom} #{nom}".strip
+      if data['patronyme']
+        mots = data['patronyme'].split(" ")
+        nom  = (mots.pop||"").upcase
+        prenom = mots.join(" ")
+        @f_patronyme = "#{prenom}<br>#{nom}".strip
+        "#{prenom} #{nom}".strip
+      end
     end
   end
   
@@ -348,8 +359,47 @@ class Genea::Person
 
   # Attention : pas utilisé en mode définition 
   def id
-    @id = nil if @id == ""
-    @id ||= data["id"] || patronyme.split(" ").map{|m|m[0].upcase}.join("")
+    @id = nil if @id == ''
+    @id ||= data['id'] || begin
+      if patronyme
+        compose_paraphe(patronyme)
+        # .tap do |paraphe|
+        #   puts "Je viens de faire un nouveau parapth pour #{self} : #{paraphe}. Est-il bien unique ?".jaune
+        #   raise "Pour voir"
+        # end
+      end #/si le patronyme est défini
+    end
+  end
+
+  def compose_paraphe(patro)
+    motspurs = patro
+    .unicode_normalize(:nfd)
+    .gsub(/\p{Mn}/, '')
+    .upcase
+    .split(' ')
+    .map { |mot| mot.split('') }
+
+    paraphe = ""
+    fin = false
+    while !fin
+      motspurs.each do |lettres|
+        if lettres.empty?
+          fin = true
+          break
+        end
+        paraphe += lettres.shift
+        if paraphe.length > 1 && self.class.get(paraphe).nil?
+          return paraphe 
+        end
+      end
+    end
+    # Par dépit, si on arrive vraiment ici, on ajoute un suffixe
+    # Pour être sûr d'obtenir un id unique
+    i = 0
+    begin
+      tested_paraphe = "#{paraphe}#{i += 1}"
+    end while self.class.exists?(tested_paraphe)
+    return tested_paraphe
   end
 
   def naissance; @naissance ||= data["naissance"] end

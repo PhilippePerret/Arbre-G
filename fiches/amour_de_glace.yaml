@@ -6,6 +6,7 @@ persons:
     mort: 1923
     mari: LM
     couleur: Main
+    id: MF
   LM:
     patronyme: Louis Morel
     naissance: 1901
@@ -25,7 +26,7 @@ persons:
     mort: 2020
     couleur: Main
   MM:
-    patronyme: Martine Morel
+    patronyme: Doris Morel
     naissance: 1953
     mort: 1973
     pere: AM
@@ -49,6 +50,7 @@ persons:
     naissance: 1979
     mari: NB
     annee_mariage: 2000
+    id: MOF
   OB:
     patronyme: Océane Boissière
     naissance: 2001
