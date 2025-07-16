@@ -32,8 +32,11 @@ class << self
       end
     # Puisque la fiche généalogique existe, on la met en mémoire
     Genea::LastAction.save(fiche: path_ini)
-    # Et on charge les données
+    # On définit le chemin d'accès à la fiche
     self.path = path
+    # On charge les autres données
+    Genea::Color.load
+    # Et on charge les données
     self.get
   end
 

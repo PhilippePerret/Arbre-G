@@ -4,8 +4,8 @@ persons:
     patronyme: Marguerite Faivre
     naissance: 1901
     mort: 1923
-    id: MF
     mari: LM
+    couleur: Main
   LM:
     patronyme: Louis Morel
     naissance: 1901
@@ -23,6 +23,7 @@ persons:
     id: AM
     femme: NJ
     mort: 2020
+    couleur: Main
   MM:
     patronyme: Martine Morel
     naissance: 1953
@@ -33,6 +34,7 @@ persons:
     - NB
     mere: AM
     mari: DB
+    couleur: Main
   NB:
     patronyme: Nicolas Boissière
     naissance: 1973
@@ -40,6 +42,13 @@ persons:
     enfants:
     - OB
     id: NB
+    couleur: Main
+    femme: MOF
+  MOF:
+    patronyme: Morgan Flavien
+    naissance: 1979
+    mari: NB
+    annee_mariage: 2000
   OB:
     patronyme: Océane Boissière
     naissance: 2001

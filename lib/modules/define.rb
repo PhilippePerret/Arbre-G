@@ -35,7 +35,7 @@ class << self
         # puts "persons: #{@persons}"
         choices = update_persons_choices(@persons)
       when :quit
-        return if Q.yes?("Veux-tu vraiment quitter sans sauver ?".orange)
+        break if Q.yes?("Veux-tu vraiment quitter sans sauver ?".orange)
         save(@persons) and break
       when :quit_and_save
         save(@persons) and break
