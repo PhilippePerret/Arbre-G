@@ -79,6 +79,6 @@ L'arbre en 2025 donnera :
 
 <img src="/assets/images/annee-2025.png" width="320px" />
 
-Le même arbre (construit simplement en ajoutant le paramètre `ar=1939`) produira : 
+Le même arbre (construit simplement en ajoutant le paramètre `ar=1938`) produira : 
 
 <img src="/assets/images/annee-1938.png" width="320px" />
