@@ -75,12 +75,10 @@ bundle exec ruby main.rb ar=1995
 
 ~~~
 
-<picture>
-  <img src="/assets/images/annee-1938.png" width="320px" />
-</picture>
+L'arbre en 2025 donnera :
 
-  <img src="/assets/images/annee-2025.png" width="320px" />
+<img src="/assets/images/annee-2025.png" width="320px" />
 
-![Arbre en 1938](/assets/images/annee-1938.png)
+Le même arbre (construit simplement en ajoutant le paramètre `ar=1939`) produira : 
 
-![Arbre en 2025](/assets/images/annee-2025.png)
+<img src="/assets/images/annee-1938.png" width="320px" />
