@@ -1,0 +1,72 @@
+---
+MF:
+  patronyme: Marguerite Faivre
+  naissance: 1901
+  mort: 1923
+  id: MF
+  mari: LM
+LM:
+  patronyme: Louis Morel
+  naissance: 1901
+  femme: MF
+  mort: 1923
+  enfants:
+  - AM
+  id: LM
+AM:
+  patronyme: André Morel
+  naissance: 1923
+  pere: LM
+  enfants:
+  - MM
+  id: AM
+  femme: NJ
+  mort: 2020
+MM:
+  patronyme: Martine Morel
+  naissance: 1953
+  mort: 1973
+  pere: AM
+  id: MM
+  enfants:
+  - NB
+  mere: AM
+  mari: DB
+NB:
+  patronyme: Nicolas Boissière
+  naissance: 1973
+  mere: MM
+  enfants:
+  - OB
+  id: NB
+OB:
+  patronyme: Océane Boissière
+  naissance: 2001
+  pere: NB
+  id: OB
+  enfants:
+  - GF
+  mari: XF
+GF:
+  patronyme: Gabriel Faivre
+  naissance: 2022
+  mort: 2023
+  mere: OB
+  id: GF
+XF:
+  patronyme: Xavier Faivre
+  naissance: 2001
+  femme: OB
+  annee_mariage: 2021
+  id: XF
+NJ:
+  patronyme: Naïa Joubant
+  naissance: 1925
+  mort: 1995
+  mari: AM
+  id: NJ
+DB:
+  patronyme: Daniel Boissière
+  naissance: 1938
+  mort: 2024
+  femme: MM

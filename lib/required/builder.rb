@@ -56,7 +56,7 @@ class << self
       if person.pere && person.pere.unbuilt?
         Genea::Person.put(person.pere)
       end
-      if person.mere && person.mere.unbuilt
+      if person.mere && person.mere.unbuilt?
         Genea::Person.put(person.mere)
       end
       if person.is_mari? && person.femme && person.femme.unbuilt?

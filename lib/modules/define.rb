@@ -12,7 +12,7 @@ class << self
     Genea::Builder.const_set('ANNEE_REF', Time.now.year)
 
     if Q.yes?("Dois-je repartir d'une généalogie existant ?".jaune)
-      @persons = Genea::Data.load(ask_for_fiche || return)
+      @persons = Genea::Data.ask_and_load_fiche
     else
       fiche_name = Q.ask("Nom de la fiche", default: 'nouvelle_fiche')
       Genea::Data.path= File.join(Genea::FICHES_FOLDER, "#{fiche_name}.yaml")
@@ -43,10 +43,6 @@ class << self
       Genea::Builder.build
       Genea.action_open
     end
-  end
-
-  def ask_for_fiche
-    Q.ask("Chemin d'accès à la fiche : ".jaune)
   end
 
   def save(lespersons)

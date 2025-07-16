@@ -22,6 +22,26 @@ class << self
     self.get
   end
 
+  # Permet de demander de choisir une fiche
+  # 
+  # ATTENTION ! Doit absolument retourner la table des personnes
+  # 
+  def ask_and_load_fiche
+    choices = 
+    Dir["#{Genea::FICHES_FOLDER}/*.yaml"].map do |path|
+      fname = File.basename(path, File.extname(path))
+      {name: fname.gsub(/_/, ' '), value: fname}
+    end + [
+      {name: "Autre fiche…", value: nil}
+    ]
+    case choix = Q.select("Quelle fiche ?".jaune, choices, per_page: choices.count, cycle: true)
+    when NilClass
+      load Q.ask("Chemin d'accès à la fiche : ".jaune)
+    else choix
+      load(choix)
+    end
+  end
+
   # @return une liste des instances Genea::Personn entièrmenent 
   # préparée et vérifiée.
   def get
@@ -71,7 +91,10 @@ class << self
   end
   def path
     # @path ||= File.join(Genea::FICHES_FOLDER, 'simple.yaml') # TODO Pouvoir la régler
-    @path ||= File.join(Genea::FICHES_FOLDER, 'famille.yaml') # TODO Pouvoir la régler
+    @path ||= begin
+      ask_and_load_fiche
+      @path # un peu tordu, mais bon…
+    end
   end
 end #/class << self
 end #/Gena::Data
