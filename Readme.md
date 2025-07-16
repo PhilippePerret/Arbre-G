@@ -75,6 +75,6 @@ bundle exec ruby main.rb ar=1995
 
 ~~~
 
-![Arbre en 2025][/images/annee-2025.png]
+![Arbre en 2025][/assets/images/annee-2025.png]
 
-![Arbre en 1938][/images/annee-1938.png]
+![Arbre en 1938][/assets/images/annee-1938.png]
