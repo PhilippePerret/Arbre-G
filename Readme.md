@@ -23,6 +23,7 @@ Dans un premier temps (mais une seule fois), créer une commande (un lien symbol
 
 ~~~
 ln -s path/to/arbre-G/bin/arbreg /usr/local/bin/arbreg
+# Remplacer 'path/to/' par votre emplacement
 ~~~
 
 Maintenant vous pouvez, simplement en ouvrant une fenêtre de Terminal (une console), taper :
@@ -73,3 +74,6 @@ ou
 bundle exec ruby main.rb ar=1995
 
 ~~~
+
+![Arbre en 2025][images/annee-2025.png]
+![Arbre en 1938][images/annee-1938.png]
