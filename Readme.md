@@ -76,8 +76,10 @@ bundle exec ruby main.rb ar=1995
 ~~~
 
 <picture>
-  <img src="/assets/images/annee-1938.png" width="100" />
+  <img src="/assets/images/annee-1938.png" width="320px" />
 </picture>
+
+  <img src="/assets/images/annee-2025.png" width="320px" />
 
 ![Arbre en 1938](/assets/images/annee-1938.png)
 
