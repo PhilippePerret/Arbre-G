@@ -95,6 +95,10 @@ class Genea::Person
   def unbuilt?
     @is_built != true
   end
+  # Pour les tests
+  def set_built(value = true)
+    @is_built = value
+  end
 
   # La marque des dates
   # -------------------
@@ -159,6 +163,7 @@ class Genea::Person
   #   
   def calc_position
     return true if col && rang
+    puts "-> pere: #{pere}"
     if is_femme? && mari.built?
       @rang = mari.rang
       @col  = mari.col + 1
@@ -167,6 +172,7 @@ class Genea::Person
       @col  = femme.col - 1
     elsif pere && pere.built?
       # Si la personne a un père
+      puts "-> par ici"
       @rang = pere.rang + 1
       if has_sibling?
         # Ce n'est pas un enfant unique. On le place en fonction
