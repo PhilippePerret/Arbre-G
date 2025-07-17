@@ -111,6 +111,19 @@ class Genea::Person
     end
   end
 
+  # Calcul de la position de la personne en fonction de sa filiation
+  # avec les personnes déjà inscrites dans l'arbre.
+  # 
+  # Principes adoptés
+  # -----------------
+  #   La "grille" est composée de RANGs et de COLs (colonnes).
+  #   - Une femme (ou conjoint) se met toujours à droite de son mari
+  #     et sur le même rang
+  #   - Un mari (ou coinjoint) se met toujours à gauche de sa femme
+  #     et sur le même rang
+  #   - Si c'est un enfant, il doit se mettre sous son père ou sa 
+  #     mère (rang + 1)
+  #   - S'il est enfant unique, il se met juste en dessous.
   def calc_position
     return if col && rang
     if is_femme? && mari.built?
@@ -120,21 +133,27 @@ class Genea::Person
       @rang = femme.rang
       @col  = femme.col - 1
     elsif pere && pere.built?
-      # Normalement, si je passe ici, c'est forcément que c'est le 
-      # premier enfant
+      # Si la personne a un père
       @rang = pere.rang + 1
       if has_sibling?
-        @col  = pere.col - siblings.count/2 + indice_enfant * 2 - 1
+        # Ce n'est pas un enfant unique. On le place en fonction
+        # de son rang dans la fratrie et le nombre de frères et
+        # de sœurs
+        @col  = pere.col - siblings.count.to_f/2 + indice_enfant * 2
+      elsif mere == pere.femme
+        # Enfant unique du père et de la mère
+        @col = pere.col + 0.5
       else
-        @col  = (pere.col) + 0.5
+        # Enfant unique seulement enfant du père
+        @col = pere.col
       end
     elsif mere && mere.built?
-      # Même remarque que ci-dessus (ici, on n'a pas le père)
+      # Si la personne n'a pas de père, mais une mère
       @rang = mere.rang + 1
       if has_sibling?
-        @col  = mere.col - 2 - siblings.count/2 + indice_enfant * 2
+        @col  = mere.col - siblings.count/2 + indice_enfant * 2
       else
-        @col = mere.col - 0.5
+        @col = mere.col
       end
     end
   end
@@ -352,8 +371,11 @@ class Genea::Person
     @enfants ||= begin
       if data['enfants']
         data['enfants'].map{|pid| self.class.get(pid)}
-      elsif has_conjoint? && conjoint.enfants
-        conjoint.enfants
+      # NON, on ne prend plus les enfants du conjoint s'ils ne sont
+      # pas définis pour soi. Le conjoint peut avoir un enfant d'un
+      # autre lit.
+      # elsif has_conjoint? && conjoint.data['enfants']
+      #   conjoint.enfants
       else
         []
       end

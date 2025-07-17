@@ -5,6 +5,10 @@ class << self
   attr_reader :persons
   attr_reader :main_person
 
+  def reset
+    @persons = {}
+  end
+
   def annee_reference
     @annee_reference ||= (CLI.params[:ar] || CLI.params[:annee_reference] || Time.now.year).to_i
   end
@@ -70,9 +74,15 @@ class << self
     File.write(path, YAML.dump(content))
   end
 
+  # Pour ajouter une personne
+  def add_person(person)
+    @persons.store(person.id, person)    
+  end
+
   def get_yaml_data
     YAML.safe_load(IO.read(path, **Genea::YAML_OPTIONS))
   end
+
   # @return une liste des instances Genea::Personn entièrmenent 
   # préparée et vérifiée.
   def get

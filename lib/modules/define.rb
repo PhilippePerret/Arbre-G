@@ -2,9 +2,6 @@ class Genea
 class Define
 class << self
 
-  
-  attr_reader :persons
-
   # Point d'entrée
   # 
   def define
@@ -15,30 +12,29 @@ class << self
       Genea::Data.load(CLI.params[:fg])
     else
       if Q.yes?("Dois-je repartir d'une généalogie existante ?".jaune)
-        @persons = Genea::Data.ask_and_load_fiche || return
+        Genea::Data.ask_and_load_fiche || return
       else
         fiche_name = Q.ask("Nom de la fiche", default: 'nouvelle_fiche')
+        Genea::Data.reset
         Genea::Data.path= File.join(Genea::FICHES_FOLDER, "#{fiche_name}.yaml")
-        @persons = {}
         define_a_person
       end
     end
 
-    choices = update_persons_choices(@persons)
+    choices = update_persons_choices(persons)
 
     while true
       clear
       case (choix = Q.select("Modifier".jaune, choices, per_page: choices.count, cycle: true))
       when :create
         new_person = define_a_person
-        @persons.store(new_person.id, new_person)
-        # puts "persons: #{@persons}"
-        choices = update_persons_choices(@persons)
+        Genea::Data.add_person(new_person)
+        choices = update_persons_choices(persons)
       when :quit
         break if Q.yes?("Veux-tu vraiment quitter sans sauver ?".orange)
-        save(@persons) and break
+        save(persons) and break
       when :quit_and_save
-        save(@persons) and break
+        save(persons) and break
       else
         define_a_person(choix)
       end
@@ -49,6 +45,10 @@ class << self
     end
   end
 
+  def persons
+    Genea::Data.persons
+  end
+
   def save(lespersons)
     hashpersons = {}
     lespersons.values.each {|p| hashpersons.store(p.id, p.data)}
@@ -56,7 +56,6 @@ class << self
   end
 
   def update_persons_choices(lespersons)
-    Genea::Person.persons = lespersons
     Genea::Person.persons_as_choices +
     [
       {name: "Nouvelle personne…".bleu, value: :create},
@@ -68,7 +67,7 @@ class << self
   # Définit une personne, la met dans la table et la retourne
   def define_a_person(person = Genea::Person.new({}))
     person.define
-    self.persons.store(person.id, person)
+    Genea::Data.add_person(person)
     return person
   end
 
@@ -78,12 +77,8 @@ end #/class Define
 class Person
   class << self
 
-    def persons
-      @persons ||= Genea::Data.persons || {}
-    end
-    def persons=(table)
-      @persons = table
-    end
+    # Raccourci
+    def persons; Genea::Data.persons end
 
     def choose_someone(params = {})
       choices = persons_as_choices(params)

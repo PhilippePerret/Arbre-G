@@ -82,3 +82,13 @@ L'arbre en 2025 donnera :
 Le même arbre (construit simplement en ajoutant le paramètre `ar=1938`) produira : 
 
 <img src="/assets/images/annee-1938.png" width="320px" />
+
+## Entrée des données
+
+### Mises en gardes
+
+Pour des données correctes, quelques mesures de prudence sont nécessaires.
+
+#### Définition des deux parents
+
+Pour qu'un enfant soit bien considéré, il faut indiquer ses deux parents. C'est particulièrement utile lorsque l'enfant n'est pas issu du couple naturel.
