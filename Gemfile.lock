@@ -6,6 +6,7 @@ GEM
       json
       tty-prompt
     concurrent-ruby (1.3.5)
+    diff-lcs (1.6.2)
     json (2.12.2)
     logger (1.7.0)
     mime-types (3.7.0)
@@ -18,6 +19,19 @@ GEM
       concurrent-ruby (>= 1.1, < 1.4)
       mime-types (>= 3.0)
       websocket-driver (>= 0.6.0)
+    rspec (3.13.1)
+      rspec-core (~> 3.13.0)
+      rspec-expectations (~> 3.13.0)
+      rspec-mocks (~> 3.13.0)
+    rspec-core (3.13.5)
+      rspec-support (~> 3.13.0)
+    rspec-expectations (3.13.5)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-mocks (3.13.5)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-support (3.13.4)
     tty-color (0.6.0)
     tty-cursor (0.7.1)
     tty-prompt (0.23.1)
@@ -41,6 +55,7 @@ PLATFORMS
 DEPENDENCIES
   clir (= 0.24.2)
   puppeteer-ruby (= 0.45.6)
+  rspec (= 3.13.1)
   yaml (= 0.4.0)
 
 BUNDLED WITH
