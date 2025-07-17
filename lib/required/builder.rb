@@ -15,7 +15,9 @@ class Builder
   RANG_GUTTER   = 65
   RANG_HEIGHT   = 100 # Si changé, 
   RANG_FULL     = RANG_HEIGHT + RANG_GUTTER
-  CHILDREN_LINK_HEIGHT = 20
+  CHILDREN_LINK_HEIGHT  = 20
+  DEMI_TRAIT_V          = 23
+  CHILD_LINK_SHRIKNESS = 2
 
   BLOCK_LEGEND = '<legend class="main" style="top:%ipx;left:%spx;">Arbre généalogique %s</legend>'.freeze
 
@@ -62,10 +64,26 @@ class << self
     # On charge les données couleur
     Genea::Color.load
 
+    # On réinitialise les personnes
+    Genea::Person.reset
+
     main_person = Data.get_main_person
-    main_person.rang  = STARTING_POINT[:rang]
-    main_person.col   = STARTING_POINT[:col]
-    puts "main_person est #{main_person}"
+    if main_person.nil?
+      # <= Personne n'a de date
+      # => J'essaie en mettant tout le monde dans la liste
+      Genea::Person.put(Data.persons.values)
+      # Il faut définir le rang de la première (mais en fait, 
+      # il faudrait définir le rang de tous ceux qui ne dépendent
+      # de personne, en fonction de ceux déjà construit)
+      premier = Data.persons.values.first
+      premier.rang = STARTING_POINT[:rang]
+      premier.col  = STARTING_POINT[:col]
+    else
+      main_person.rang  = STARTING_POINT[:rang]
+      main_person.col   = STARTING_POINT[:col]
+      Genea::Person.put(main_person)
+      # puts "main_person est #{main_person}"
+    end
 
     avant, apres = 
       IO.read(modele_path)
@@ -74,12 +92,23 @@ class << self
 
     code = []
 
-    Genea::Person.reset
-    Genea::Person.put(main_person)
     while (person = Genea::Person.shift)
       next if person.built?
       log "Traitement de #{person.patronyme}"
-      person.add_to_arbre(code)
+      person.add_to_arbre(code) || begin
+        # Si on n'a pas pu ajouter la personne à l'arbre, on la
+        # remet en espérant que ça passera mieux ensuite. Mais 
+        # seulement si on n'a pas déjà essayé
+        log "IMPOSSIBLE DE PLACER #{person}"
+        unless person.retry_building
+          Genea::Person.put(person)
+          person.retry_building = true
+          log "#{person} replacé dans la boucle"
+        else
+          log "FATAL: Traitement de #{person} abandonné."
+        end
+        next
+      end
       log "#{person.patronyme} : rang=#{person.rang.inspect} col=#{person.col.inspect} | top=#{person.top.inspect} | left=#{person.left.inspect}"
       if person.pere && person.pere.unbuilt?
         Genea::Person.put(person.pere)
@@ -156,8 +185,6 @@ class << self
   
   TEMP_DEMITRAIT_VERT_EPOUX = '<div class="trait%s" style="top:%spx;left:%spx;height:%spx;"></div>'.freeze
   
-  DEMI_TRAIT_V = 25
-
   def build_epoux_link(mari)
     ghosted = mari.not_maried_yet? ? ' ghost' : ''
     traits = []
@@ -192,6 +219,47 @@ class << self
 
   TRAIT_TEMP = '<div class="trait%s" style="top:%spx;left:%spx;height:%spx;width:%spx;"></div>'.freeze
 
+  # Dessine et retourne le trait vertical supérieur pour un enfant
+  # qui n'est pas unique (pour un enfant unique, le trait est déjà
+  # dessiné)
+  # TODO Quand on améliorera le programme, il faudra envoyer le parent
+  # à ces méthodes pour placer l'enfant par rapport à lui et pas dans
+  # l'absolu.
+  def draw_vlink_child(person)
+    ghosted = person.is_borned? ? '' : ' ghost'
+    left = person.left + COL_WIDTH/2
+    # La personne mémorise le left de sa liaison qui peut 
+    # servir (notamment quand c'est le dernier)
+    person.left_up_vlink = left
+    top = person.top - CHILDREN_LINK_HEIGHT
+    traits = []
+    traits << TRAIT_TEMP % [
+      ghosted,
+      top,
+      left,
+      CHILDREN_LINK_HEIGHT,
+      CHILD_LINK_SHRIKNESS
+    ]
+    if person.is_last_child?
+      parent = (person.pere||person.mere)
+      one_is_born = false
+      parent.sorted_children.each do |p| # Ici un problème si c'est la mère…
+        one_is_born = true unless p.not_borned?
+      end
+      ghosted = one_is_born ? '' : ' ghost'
+      aine = parent.sorted_children.first
+      aine_left  = aine.left_up_vlink
+      width = left - aine_left
+      traits << TRAIT_TEMP % [
+        ghosted,
+        top,
+        aine_left,
+        CHILD_LINK_SHRIKNESS,
+        width
+      ]
+    end
+    return traits.join('')
+  end
   # Construction des traits si enfant
   # 1. Il y a un trait vertical entre les parents (todo: traiter l'adoption)
   # 2. Il y a un train horizontal pour accrocher les enfants (à définir suivant les enfants)

@@ -1,0 +1,21 @@
+---
+persons:
+  LP:
+    patronyme: Le Père
+    femme: LM
+    enfants:
+    - LF
+  LM:
+    patronyme: La mère
+    mari: LP
+    enfants:
+    - LF
+  MD:
+    patronyme: Mari DeLaFille
+    femme: LF
+  LF:
+    patronyme: La Fille
+    mari: MD
+    pere: LP
+    mere: LM
+colors: {}

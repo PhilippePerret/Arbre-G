@@ -15,6 +15,7 @@ persons:
   EN:
     patronyme: Un Enfant
     pere: PE
+    mere: ME
     id: EN
     couleur: Main
 colors:

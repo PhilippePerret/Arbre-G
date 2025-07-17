@@ -3,6 +3,7 @@ class Genea::Person
 
     def reset
       @all = []
+      @all_as_table = {}
     end
 
     # Pour ajouter une personne aux personnes à ajouter dans l'arbre
@@ -12,16 +13,26 @@ class Genea::Person
     # @param {Person|Array} person Une personne ou une liste de personnes
     def put(person)
       if person.is_a?(Array)
-        @all += person
+        person.each do |perso|
+          add_in_all(perso) unless @all_as_table[perso.id]
+        end
       else
-        @all << person
+        add_in_all(person) unless @all_as_table[person.id]
       end
+      # puts "@all contient (#{@all.count}) #{@all.map{|p|p.patronyme}.pretty_join}"
+    end
+
+    def add_in_all(person)
+      @all << person 
+      @all_as_table.store(person.id, true)
     end
 
     # Prendre la première personne de toutes celles qu'il faut trai-
-    # ter et la retirer.
-    def shift
-      @all.shift
+    # ter et la retirer pour la renvoyer.
+    def shift 
+      person = @all.shift || return
+      @all_as_table.delete(person.id)
+      return person
     end
 
     # @return la personnne ou Nil si elle n'existe pas
@@ -39,6 +50,14 @@ class Genea::Person
   attr_reader :data
   attr_accessor :rang, :col
 
+  # Sera mis à true si on a essayé une première fois de construire la
+  # personne mais que ça a échoué (on la remet dans la pile)
+  attr_accessor :retry_building
+  # Position left du trait vertical au-dessus de la boite de nom
+  # lorsque la personne est un enfant
+  # Défini par la méthode Genea::Builder@draw_vlink_child
+  attr_accessor :left_up_vlink
+
   def initialize(data)
     @data     = data
   end
@@ -49,9 +68,14 @@ class Genea::Person
 
   def add_to_arbre(code)
     return if built?
-    calc_position
+    calc_position || return
     code << Genea::Builder.build_person_bloc(self)
     @is_built = true
+    return true
+  end
+
+  def is_borned?
+    !not_borned?
   end
 
   def not_borned?
@@ -102,8 +126,13 @@ class Genea::Person
         elements << Genea::Builder.build_epoux_link(self)
       end
 
-      if (pere || mere) && indice_enfant == 0
-        elements << Genea::Builder.build_children_links(pere || mere)
+      if (pere || mere) 
+        # Si la personne a un père ou une mère, il faut lui mettre
+        # dans tous les cas le trait vertical de liaison, sauf s'il
+        # est enfant unique ?
+        elements << Genea::Builder.draw_vlink_child(self) if has_sibling?
+        # && indice_enfant == 0
+        # elements << Genea::Builder.build_children_links(pere || mere)
       end
 
       elements.flatten.compact.join('')
@@ -129,7 +158,7 @@ class Genea::Person
   #     fonction du sexe)
   #   
   def calc_position
-    return if col && rang
+    return true if col && rang
     if is_femme? && mari.built?
       @rang = mari.rang
       @col  = mari.col + 1
@@ -162,7 +191,11 @@ class Genea::Person
       else
         @col = mere.col
       end
+    else
+      Genea::Builder.log("PROBLEM: avec #{self}. Impossible de déterminer @rang et @col.")
+      return nil
     end
+    return true
   end
 
   def top
@@ -206,6 +239,10 @@ class Genea::Person
 
   def has_sibling? 
     (pere || mere) && siblings.count > 1
+  end
+
+  def is_last_child?
+    has_sibling? && indice_enfant == siblings.count - 1
   end
 
   def previous_sibling

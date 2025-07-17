@@ -1,0 +1,23 @@
+---
+persons:
+  LM:
+    patronyme: La Mère
+    mari: LP
+    enfants:
+    - LF
+    - LFC
+  LP:
+    patronyme: Le Père
+    femme: LM
+    enfants:
+    - LF
+    - LFC
+  LF:
+    patronyme: Le Fils Ainé
+    pere: LP
+    mere: LM
+  LFC:
+    patronyme: Le Fils Cadet
+    pere: LP
+    mere: LM
+colors: {}
