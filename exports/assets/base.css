@@ -68,3 +68,11 @@ legend.main {
   font-size: 14pt;
   text-align: center;
 }
+
+img.sexe {
+  position:absolute;
+  right:  5px;
+  top:    5px;
+  width:  16px;
+  opacity: 0.6;
+}

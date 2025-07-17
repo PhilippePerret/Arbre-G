@@ -118,6 +118,8 @@ class Person
       when :patronyme 
         self.patronyme = Q.ask("Patronyme : ".jaune, default: patronyme)
         id if @id.nil?
+      when :sexe
+        self.sexe = choose_sexe(default: sexe)
       when :naissance 
         self.naissance = choose_date("Année de naissance : ", :birth)
       when :mort 
@@ -186,6 +188,17 @@ class Person
     sleep 2
   end
 
+  def choose_sexe(default: 'F')
+    choices = [
+      {name: "Femme", value: 'F'},
+      {name: "Homme", value: 'H'},
+      {name: "Indéterminé", value: 'I'},
+      {name: "Retirer l'information", value: nil}
+    ]
+    puts "default = #{default.inspect}"
+    Q.select("Sexe : ".jaune, choices, per_page: choices.count, cycle: true, default: default)
+  end
+
   def choose_date(message, type)
     Q.ask(message.jaune, convert: :int) do |q| 
       q.convert ->(input) { input.to_i }
@@ -212,6 +225,7 @@ class Person
     [
       {name: "Patronyme : #{patronyme.inspect}", value: :patronyme, default: patronyme},
       {name: "ID : #{id.inspect}", value: :id, default: id },
+      {name: "Sexe : #{sexe}", value: :sexe},
       {name: "Naissance : #{naissance.inspect}", value: :naissance, default: nil},
       {name: "Mort : #{mort.inspect}", value: :mort, default: nil},
       {name: "Mari : #{mari}", value: :mari, default: mari},

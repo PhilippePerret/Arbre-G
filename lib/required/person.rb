@@ -480,6 +480,11 @@ class Genea::Person
     return tested_paraphe
   end
 
+  def sexe; @sexe ||= data['sexe'] end
+  def sexe=(value)
+    @sexe = value
+    @data.store('sexe', value)
+  end
   def naissance; @naissance ||= data["naissance"] end
   def naissance=(value)
     @naissance = value

@@ -170,6 +170,7 @@ class << self
     class_css << 'ghost' if person.not_borned?
     <<~HTML
       <div class="#{class_css.join(' ')}" style="top:#{person.top}px;left:#{person.left}px;background-color:##{Genea::Color.get(person.couleur)||'white'};">
+        #{div_image(person)}
         <div class="name">#{person.f_patronyme}</div>
         <div class="dates">#{person.f_mark_dates}</div>
       </div>
@@ -178,6 +179,13 @@ class << self
   rescue Exception => e
     puts "ERREUR SURVENUE AVEC #{person} : #{e.message}".rouge
     puts e.backtrace.join("\n").rouge if Genea.debug?
+  end
+
+  TEMP_IMG_SEXE = '<img src="assets/images/%s.png" class="sexe" />'
+  def div_image(person)
+    return "" if person.sexe.nil?
+    image = {'F' => 'venus', 'H' => 'mars', 'I' => 'venus-mars'}[person.sexe]
+    TEMP_IMG_SEXE % [image]
   end
 
   # Construction du bloc de liaison entre mari et femme

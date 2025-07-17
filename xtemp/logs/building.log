@@ -1,12 +1,14 @@
-Traitement de Le PÈRE
-Le PÈRE : rang=4 col=4 | top=660 | left=800
-Traitement de La MÈRE
-La MÈRE : rang=4 col=5 | top=660 | left=1000
-Traitement de Mari DELAFILLE
-PROBLEM: avec <<Person Mari DELAFILLE indice:0>>. Impossible de déterminer @rang et @col.
-IMPOSSIBLE DE PLACER <<Person Mari DELAFILLE indice:0>>
-<<Person Mari DELAFILLE indice:0>> replacé dans la boucle
-Traitement de La FILLE
-La FILLE : rang=5 col=4.5 | top=825 | left=900
-Traitement de Mari DELAFILLE
-Mari DELAFILLE : rang=5 col=3.5 | top=825 | left=700
+Traitement de Daniel PERRET
+Daniel PERRET : rang=4 col=4 | top=660 | left=800
+Traitement de Marie-Claire PERRET
+Marie-Claire PERRET : rang=4 col=5 | top=660 | left=1000
+Traitement de Gilles PERRET
+Gilles PERRET : rang=5 col=2.0 | top=825 | left=400
+Traitement de Philippe PERRET
+Philippe PERRET : rang=5 col=4.0 | top=825 | left=800
+Traitement de Thierry PERRET
+Thierry PERRET : rang=5 col=6.0 | top=825 | left=1200
+Traitement de Valérie PERRET
+Valérie PERRET : rang=5 col=9.0 | top=825 | left=1800
+Traitement de Olivier BIAREZ
+Olivier BIAREZ : rang=5 col=8.0 | top=825 | left=1600
