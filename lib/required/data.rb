@@ -6,7 +6,7 @@ class << self
   attr_reader :main_person
 
   def annee_reference
-    @annee_reference ||= CLI.params[:ar] || CLI.params[:annee_reference] || Time.now.year
+    @annee_reference ||= (CLI.params[:ar] || CLI.params[:annee_reference] || Time.now.year).to_i
   end
 
   def fiche_genealogie

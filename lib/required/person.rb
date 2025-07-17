@@ -48,6 +48,7 @@ class Genea::Person
   end
 
   def add_to_arbre(code)
+    return if built?
     calc_position
     code << Genea::Builder.build_person_bloc(self)
     @is_built = true
@@ -106,7 +107,6 @@ class Genea::Person
         elements << Genea::Builder.build_children_links(pere || mere)
       end
 
-
       elements.flatten.compact.join('')
     end
   end
@@ -142,7 +142,7 @@ class Genea::Person
   def top
     @top ||= begin
       # puts "rang de #{self}: #{rang.inspect}"
-      rang * Genea::Builder::RANG_FULL
+      (rang * Genea::Builder::RANG_FULL).round
     end.tap do |val| 
       Genea::Builder.set_max(:bottom, val + Genea::Builder::RANG_FULL)
       Genea::Builder.set_max(:top, val, :smaller)
@@ -151,7 +151,7 @@ class Genea::Person
   def left
     @left ||= begin
       # puts "col de #{self}: #{col.inspect}"
-      col * Genea::Builder::COL_WIDTH    
+      (col * Genea::Builder::COL_WIDTH).round
     end.tap do |val|
       Genea::Builder.set_max(:left, val, :smaller)
       Genea::Builder.set_max(:right, val)
@@ -285,6 +285,10 @@ class Genea::Person
     mari.nil? && !femme.nil?
   end
 
+  def has_conjoint?
+    !conjoint.nil?
+  end
+
   def has_enfants?
     enfants.count > 0
   end
@@ -345,7 +349,15 @@ class Genea::Person
     @data.store('enfants', value.map{|p|p.id})
   end
   def enfants
-    @enfants ||= (data['enfants']||[]).map{|pid| self.class.get(pid)}
+    @enfants ||= begin
+      if data['enfants']
+        data['enfants'].map{|pid| self.class.get(pid)}
+      elsif has_conjoint? && conjoint.enfants
+        conjoint.enfants
+      else
+        []
+      end
+    end
   end
   def add_enfant(person)
     @enfants ||= []

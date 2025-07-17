@@ -77,9 +77,10 @@ class << self
     Genea::Person.put(main_person)
     # puts "main_person est #{main_person}"
     while (person = Genea::Person.shift)
+      next if person.built?
       log "Traitement de #{person.patronyme}"
       person.add_to_arbre(code)
-      log "#{personpatronyme} : rang=#{person.rang.inspect} col=#{person.col.inspect} | top=#{person.top.inspect} | left=#{person.left.inspect}"
+      log "#{person.patronyme} : rang=#{person.rang.inspect} col=#{person.col.inspect} | top=#{person.top.inspect} | left=#{person.left.inspect}"
       if person.pere && person.pere.unbuilt?
         Genea::Person.put(person.pere)
       end
@@ -115,8 +116,8 @@ class << self
     end
   end
 
-  # Construction du bloc de repositionnement (seulement sa balise 
-  # d'ouverture)
+  # Construction du bloc de repositionnement (sa balise 
+  # d'ouverture seulement <div ...>)
   # C'est un bloc qui vise à repositionner l'arbre dans la fenêtre
   # afin qu'il soit bien en haut à droite.
   BLOCK_REPO_TEMP = '<div id="bloc_repositionnement" style="top:%spx;left:%spx;">'
@@ -151,17 +152,42 @@ class << self
   end
 
   # Construction du bloc de liaison entre mari et femme
-  TEMP_LINK_EPOUX = '<div class="hlink%s" style="top:%spx;left:%spx;width:%spx;"><span class="annee">%s</span></div>'.freeze
+  TEMP_LINK_EPOUX = '<div class="hlink%s" style="top:%spx;left:%spx;width:%spx;height:%spx;"><span class="annee">%s</span></div>'.freeze
   
+  TEMP_DEMITRAIT_VERT_EPOUX = '<div class="trait%s" style="top:%spx;left:%spx;height:%spx;"></div>'.freeze
+  
+  DEMI_TRAIT_V = 25
+
   def build_epoux_link(mari)
     ghosted = mari.not_maried_yet? ? ' ghost' : ''
-    TEMP_LINK_EPOUX % [
+    traits = []
+    top_main    = mari.top + RANG_HEIGHT
+    left_main   = mari.left + COL_WIDTH/2
+    width_main  = COL_WIDTH - COL_GUTTER
+    height_main = DEMI_TRAIT_V
+    traits << TEMP_LINK_EPOUX % [
       ghosted, 
-      mari.top + RANG_HEIGHT, 
-      mari.left + COL_WIDTH/2, 
-      COL_WIDTH - COL_GUTTER,
+      top_main, 
+      left_main, 
+      width_main,
+      height_main,
       mari.annee_mariage || ""
     ]
+    # S'il y a des enfants, on ajoute le demi-trait descendant qui va
+    # soit rejoindre la barre horizontale joignant tous les enfants, 
+    # soit le trait vertical rejoignant l'enfant unique
+    if mari.has_children?
+      top_sub = top_main + height_main
+      height_sub = (mari.enfants.count == 1) ? DEMI_TRAIT_V * 2 : DEMI_TRAIT_V ;
+      traits << TEMP_DEMITRAIT_VERT_EPOUX % [
+        ghosted, 
+        top_sub,
+        left_main + width_main / 2,
+        height_sub
+      ]
+    end
+
+    return traits.join('')
   end
 
   TRAIT_TEMP = '<div class="trait%s" style="top:%spx;left:%spx;height:%spx;width:%spx;"></div>'.freeze
@@ -171,6 +197,7 @@ class << self
   # 2. Il y a un train horizontal pour accrocher les enfants (à définir suivant les enfants)
   # 3. Il y a autant de trait verticaux qu'il faut entre les enfants et le trait horizontal
   def build_children_links(mari)
+    return ''
     enfants = mari.sorted_children
     ecount  = enfants.count
     one_is_born = false
