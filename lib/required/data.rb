@@ -119,8 +119,10 @@ class << self
   # Maintenant, on prend toujours le plus vieux
   # 
   def get_main_person
-    persons.values.sort_by do |p| 
-      p.naissance || 0
+    persons.values
+    .reject { |p| p.naissance.nil? }
+    .sort_by do |p| 
+      p.naissance
     end
     # Pour afficher les personnes dans l'ordre
     # .tap { |sorted| sorted.each { |perso| puts "#{perso}"}}

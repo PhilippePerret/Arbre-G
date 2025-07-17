@@ -10,6 +10,7 @@ persons:
     - GP
     - PP
     - TP
+    - VP
   MP:
     patronyme: Marie-Claire Perret
     naissance: 1939
@@ -20,6 +21,7 @@ persons:
     - PP
     - GP
     - TP
+    - VP
   GP:
     patronyme: Gilles Perret
     naissance: 1962
@@ -35,6 +37,18 @@ persons:
   TP:
     patronyme: Thierry Perret
     naissance: 1967
+    pere: DP
+    mere: MP
+    id: TP
+  OB:
+    patronyme: Olivier Biarez
+    femme: VP
+    id: OB
+  VP:
+    patronyme: Valérie Perret
+    naissance: 1973
+    mari: OB
+    id: VP
     pere: DP
     mere: MP
 colors: {}

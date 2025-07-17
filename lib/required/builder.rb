@@ -65,6 +65,7 @@ class << self
     main_person = Data.get_main_person
     main_person.rang  = STARTING_POINT[:rang]
     main_person.col   = STARTING_POINT[:col]
+    puts "main_person est #{main_person}"
 
     avant, apres = 
       IO.read(modele_path)
@@ -75,7 +76,6 @@ class << self
 
     Genea::Person.reset
     Genea::Person.put(main_person)
-    # puts "main_person est #{main_person}"
     while (person = Genea::Person.shift)
       next if person.built?
       log "Traitement de #{person.patronyme}"

@@ -62,7 +62,7 @@ class Genea::Person
   # encore marié
   def not_maried_yet?
     return false if conjoint.nil?
-    not_borned? || conjoint.not_borned? || (annee_mariage && annee_mariage > Genea::Builder::ANNEE_REF) || (age < 12)
+    not_borned? || conjoint.not_borned? || (annee_mariage && annee_mariage > Genea::Builder::ANNEE_REF) || (age && age < 12)
   end
 
   def built?
@@ -89,7 +89,6 @@ class Genea::Person
         end
 
       mark_naissance = naissance ? naissance.to_s : " ? "
-      mark_age = age ? "(#{age} ans)" : ""
 
       "#{mark_naissance} – #{mark_mort} #{mark_age}"
     end
@@ -123,7 +122,12 @@ class Genea::Person
   #     et sur le même rang
   #   - Si c'est un enfant, il doit se mettre sous son père ou sa 
   #     mère (rang + 1)
-  #   - S'il est enfant unique, il se met juste en dessous.
+  #   - S'il est enfant unique et seulement du père ou seulement de
+  #     la mère, il se met juste en dessous.
+  #   - Quand il appartient à une fratrie, on les répartit en dessous
+  #     en laissant la place pour les conjoints (du bout côté en 
+  #     fonction du sexe)
+  #   
   def calc_position
     return if col && rang
     if is_femme? && mari.built?
@@ -140,6 +144,9 @@ class Genea::Person
         # de son rang dans la fratrie et le nombre de frères et
         # de sœurs
         @col  = pere.col - siblings.count.to_f/2 + indice_enfant * 2
+        # Si c'est la femme (ou assimilé) du couple, il faut la 
+        # pousser à droite
+        @col += 1 if has_conjoint? && is_femme?
       elsif mere == pere.femme
         # Enfant unique du père et de la mère
         @col = pere.col + 0.5
@@ -453,16 +460,20 @@ class Genea::Person
     @data.store('annee_mariage', value)
   end
 
+  def mark_age
+    @mark_age ||= begin
+      age ? "(#{age} an#{"s" if age > 1})" : '?'
+    end
+  end
+
   def age 
     @age ||= begin
       if naissance.nil? || naissance == '?'
-        '?'
+        nil
       elsif mort.is_a?(Integer) && mort < Genea::Builder::ANNEE_REF
         mort - naissance
-      elsif mort.is_a?(String)
-        mort
       else
-        Genea::Builder::ANNEE_REF - naissance # TODO Plus tard en fonction du format de date de la naissance
+        Genea::Builder::ANNEE_REF - naissance
       end
     end
   end
