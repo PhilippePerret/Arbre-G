@@ -21,6 +21,19 @@ class Builder
 
 class << self
 
+  # Pour enregistrer le détail de la construction
+  def log(str)
+    reflog.puts(str)
+  end
+  def reflog
+    @reflog ||= begin
+      File.delete(pathlog) if File.exist?(pathlog)
+      File.open(pathlog, 'a')
+    end
+  end
+  def pathlog
+    @pathlog ||= File.join(Genea::TMP_FOLDER, 'logs','building.log')
+  end
 
   ##
   # Point d'entrée pour construire l'arbre généalogique
@@ -62,10 +75,11 @@ class << self
 
     Genea::Person.reset
     Genea::Person.put(main_person)
-    puts "main_person est #{main_person}"
+    # puts "main_person est #{main_person}"
     while (person = Genea::Person.shift)
-      puts "Traitement de #{person.patronyme}".jaune
+      log "Traitement de #{person.patronyme}"
       person.add_to_arbre(code)
+      log "#{personpatronyme} : rang=#{person.rang.inspect} col=#{person.col.inspect} | top=#{person.top.inspect} | left=#{person.left.inspect}"
       if person.pere && person.pere.unbuilt?
         Genea::Person.put(person.pere)
       end
