@@ -98,3 +98,9 @@ Dans le cas contraire, on peut tomber sur ce problème :
 <img src="/assets/images/problem-disjoint.png" width="320px" />
 
 > Ci-dessous, la mère de André MOREL n'est pas définie.
+
+Une fois résolu, l'affichage sera correct : 
+
+<img src="/assets/images/problem-disjoint-resolu.png" width="320px" />
+
+> Noter que ci-dessous l'option de configuration `:uniq_child_always_between` a été activée, permettant de laisser toujours au centre les enfants uniques.
