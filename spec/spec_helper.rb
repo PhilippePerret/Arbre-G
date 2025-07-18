@@ -95,7 +95,26 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
-# Pour charger toute l'application
-require './lib/required'
+
+  # Pour charger toute l'application
+  require './lib/required'
+
+
+  PRENOMS = {
+    masculin: %w(Victor Daniel Martin Denis Philippe Thierry Laurent Benoît Étienne Éric Germain Kevin David Bernard René),
+    feminin: %w(Marion Sandrine Marie-Claire, Martine Salomé Victoria Véronique Élizabeth Liza Germaine Renée Gisèle Manon Morgane Naïa Nouria Solange Solène)
+  }
+  NOMS = %w(DANIEL MICHEL CASSARD PERRET ACCORD LECLERC MARTIN MOUGEOT MARIN CHIRAC JOBS PICARD MICHAUD LEMAND FOUCAULT)
+  
+  def random_patronyme(prenoms, noms, sexe: :masculin)
+    prenoms ||= PRENOMS[sexe]
+    "#{random_prenom(prenoms)} #{random_nom(noms)}"
+  end
+  def random_prenom(prenoms)
+    prenoms.slice!(rand(prenoms.count))
+  end
+  def random_nom(noms)
+    noms.slice!(rand(noms.count))
+  end
 
 end

@@ -27,11 +27,12 @@ class << self
   end
   def action_build
     Builder.build
+    action_open if Q.yes?("Veux l'ouvrir dans le navigateur ?".jaune)
   end
   def action_open
     puts "Ouverture de l'arbre dans le navigateur…".bleu
-    `open "#{Genea::Builder.path}"`
     `open -a Finder "#{File.dirname(Genea::Builder.path)}"`
+    `open "#{Genea::Builder.path}"`
   end
 
   # Fabrication PNG

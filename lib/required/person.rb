@@ -163,7 +163,7 @@ class Genea::Person
   #   
   def calc_position
     return true if col && rang
-    puts "-> pere: #{pere}"
+    puts "-> je passe"
     if is_femme? && mari.built?
       @rang = mari.rang
       @col  = mari.col + 1
@@ -172,7 +172,7 @@ class Genea::Person
       @col  = femme.col - 1
     elsif pere && pere.built?
       # Si la personne a un père
-      puts "-> par ici"
+      puts "-> père et père construit"
       @rang = pere.rang + 1
       if has_sibling?
         # Ce n'est pas un enfant unique. On le place en fonction
@@ -182,9 +182,19 @@ class Genea::Person
         # Si c'est la femme (ou assimilé) du couple, il faut la 
         # pousser à droite
         @col += 1 if has_conjoint? && is_femme?
-      elsif mere == pere.femme
+      elsif mere && mere == pere.femme
         # Enfant unique du père et de la mère
-        @col = pere.col + 0.5
+        puts "-> mère et mère du père"
+        if is_single?
+          @col = pere.col + 0.5
+        elsif is_mari?
+          @col = pere.col
+        elsif is_femme?
+          puts "-> est femme (mere.col = #{mere.col.inspect})"
+          @col = mere.col
+        else
+          raise "Ce cas-là ne devrait jamais arriver"
+        end
       else
         # Enfant unique seulement enfant du père
         @col = pere.col
@@ -357,6 +367,10 @@ class Genea::Person
   def has_conjoint?
     !conjoint.nil?
   end
+  
+  def is_single?
+    conjoint.nil?
+  end
 
   def has_enfants?
     enfants.count > 0
@@ -446,7 +460,7 @@ class Genea::Person
     @id = nil if @id == ''
     @id ||= data['id'] || begin
       if patronyme
-        compose_paraphe(patronyme)
+        self.class.make_uniq_id(patronyme)
         # .tap do |paraphe|
         #   puts "Je viens de faire un nouveau parapth pour #{self} : #{paraphe}. Est-il bien unique ?".jaune
         #   raise "Pour voir"
@@ -455,7 +469,7 @@ class Genea::Person
     end
   end
 
-  def compose_paraphe(patro)
+  def self.make_uniq_id(patro)
     motspurs = patro
     .unicode_normalize(:nfd)
     .gsub(/\p{Mn}/, '')
@@ -472,7 +486,7 @@ class Genea::Person
           break
         end
         paraphe += lettres.shift
-        if paraphe.length > 1 && self.class.get(paraphe).nil?
+        if paraphe.length > 1 && get(paraphe).nil?
           return paraphe 
         end
       end
@@ -482,7 +496,7 @@ class Genea::Person
     i = 0
     begin
       tested_paraphe = "#{paraphe}#{i += 1}"
-    end while self.class.exists?(tested_paraphe)
+    end while exists?(tested_paraphe)
     return tested_paraphe
   end
 
