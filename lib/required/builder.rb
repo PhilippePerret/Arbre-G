@@ -227,7 +227,8 @@ class << self
         when enfant_unique 
           child = mari.enfants.first
           case true 
-          when child.is_single? then width_main / 2
+          when child.is_single? || Genea::CONFIG[:uniq_child_always_between]
+            width_main / 2
           when child.is_mari?   then 0
           when child.is_femme?  then width_main + 2
           else raise "Ce cas ne devrait jamais survenir."

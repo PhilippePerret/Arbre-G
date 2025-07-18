@@ -163,7 +163,6 @@ class Genea::Person
   #   
   def calc_position
     return true if col && rang
-    puts "-> je passe"
     if is_femme? && mari.built?
       @rang = mari.rang
       @col  = mari.col + 1
@@ -172,7 +171,7 @@ class Genea::Person
       @col  = femme.col - 1
     elsif pere && pere.built?
       # Si la personne a un père
-      puts "-> père et père construit"
+      # puts "-> père et père construit"
       @rang = pere.rang + 1
       if has_sibling?
         # Ce n'est pas un enfant unique. On le place en fonction
@@ -183,14 +182,16 @@ class Genea::Person
         # pousser à droite
         @col += 1 if has_conjoint? && is_femme?
       elsif mere && mere == pere.femme
-        # Enfant unique du père et de la mère
-        puts "-> mère et mère du père"
-        if is_single?
+        # Enfant unique du père et de la mère ou si les configuration
+        # indiquent qu'il faut toujours mettre l'enfant unique au
+        # centre
+        # puts "-> mère et mère du père"
+        if is_single? || Genea::CONFIG[:uniq_child_always_between]
           @col = pere.col + 0.5
         elsif is_mari?
           @col = pere.col
         elsif is_femme?
-          puts "-> est femme (mere.col = #{mere.col.inspect})"
+          # puts "-> est femme (mere.col = #{mere.col.inspect})"
           @col = mere.col
         else
           raise "Ce cas-là ne devrait jamais arriver"

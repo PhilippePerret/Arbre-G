@@ -92,3 +92,9 @@ Pour des données correctes, quelques mesures de prudence sont nécessaires.
 #### Définition des deux parents
 
 Pour qu'un enfant soit bien considéré, il faut indiquer ses deux parents. C'est particulièrement utile lorsque l'enfant n'est pas issu du couple naturel.
+
+Dans le cas contraire, on peut tomber sur ce problème :
+
+<img src="/assets/images/problem-disjoint.png" width="320px" />
+
+> Ci-dessous, la mère de André MOREL n'est pas définie.

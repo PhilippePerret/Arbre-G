@@ -4,6 +4,7 @@ class << self
   # Point d'entrée
   # 
   def run
+    Genea::Config.init
     LastAction.load if same_command?
 
     action ||= CLI.main_command || choose_action || return
@@ -20,6 +21,8 @@ class << self
     end
   end
 
+  # Raccourci pour les options
+  def option?(opt); CLI.option(opt) end
   
   def action_define
     require_relative '../modules/define'
@@ -27,7 +30,10 @@ class << self
   end
   def action_build
     Builder.build
-    action_open if Q.yes?("Veux l'ouvrir dans le navigateur ?".jaune)
+    unless option?(:no)
+      puts "(ajouter l'option -no pour ne pas demander ça à chaque fois)".gris
+      action_open if Q.yes?("Veux l'ouvrir dans le navigateur ?".jaune)
+    end
   end
   def action_open
     puts "Ouverture de l'arbre dans le navigateur…".bleu

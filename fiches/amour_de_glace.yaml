@@ -7,6 +7,8 @@ persons:
     mari: LM
     couleur: Main
     id: MF
+    enfants:
+    - AM
   LM:
     patronyme: Louis Morel
     naissance: 1901
@@ -25,6 +27,7 @@ persons:
     femme: NJ
     mort: 2020
     couleur: Main
+    mere: MF
   MM:
     patronyme: Doris Morel
     naissance: 1953

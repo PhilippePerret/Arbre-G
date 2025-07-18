@@ -1,0 +1,9 @@
+---
+# Configuration
+
+# Préférence pour le placement d'un enfant unique
+# Soit on le met toujours entre ses deux parents (en dessous) [valeur
+# true ci-dessous], soit on le place sous le père si c'est un mari 
+# (ou assimilé) ou sous la mère si c'est une épouse (ou assimilée)
+# [valeur false ci-dessous]
+uniq_child_always_between: true
