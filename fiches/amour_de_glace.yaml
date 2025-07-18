@@ -33,7 +33,7 @@ persons:
     id: MM
     enfants:
     - NB
-    mere: AM
+    mere: NJ
     mari: DB
     couleur: Main
   NB:
@@ -45,12 +45,15 @@ persons:
     id: NB
     couleur: Main
     femme: MOF
+    pere: DB
   MOF:
-    patronyme: Morgan Flavien
+    patronyme: Morgane Flavien
     naissance: 1979
     mari: NB
     annee_mariage: 2000
     id: MOF
+    enfants:
+    - OB
   OB:
     patronyme: Océane Boissière
     naissance: 2001
@@ -60,6 +63,7 @@ persons:
     - GF
     mari: XF
     couleur: Main
+    mere: MOF
   GF:
     patronyme: Gabriel Faivre
     naissance: 2022
@@ -67,23 +71,30 @@ persons:
     mere: OB
     id: GF
     couleur: Main
+    pere: XF
   XF:
     patronyme: Xavier Faivre
     naissance: 2001
     femme: OB
     annee_mariage: 2021
     id: XF
+    enfants:
+    - GF
   NJ:
     patronyme: Naïa Joubant
     naissance: 1925
     mort: 1995
     mari: AM
     id: NJ
+    enfants:
+    - MM
   DB:
     patronyme: Daniel Boissière
     naissance: 1938
     mort: 2024
     femme: MM
     id: DB
+    enfants:
+    - NB
 colors:
   Main: CCCFFF

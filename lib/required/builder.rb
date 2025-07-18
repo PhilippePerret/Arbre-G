@@ -210,14 +210,34 @@ class << self
     ]
     # S'il y a des enfants, on ajoute le demi-trait descendant qui va
     # soit rejoindre la barre horizontale joignant tous les enfants, 
-    # soit le trait vertical rejoignant l'enfant unique
+    # soit le trait vertical rejoignant l'enfant unique.
+    # Si l'enfant unique n'est pas marié, il est mis au centre des
+    # deux parent, sinon, il est mis sous le père si c'est le mari
+    # (ou assimilé) ou sous la mère si c'est la femme (ou assimilée)
     if mari.has_children?
+      enfant_unique = mari.enfants.count == 1
       top_sub = top_main + height_main
-      height_sub = (mari.enfants.count == 1) ? DEMI_TRAIT_V * 2 : DEMI_TRAIT_V ;
+      # La longueur du trait, fonction du fait qu'il y a un seul 
+      # enfant ou plusieurs
+      height_sub = enfant_unique ? DEMI_TRAIT_V * 2 : DEMI_TRAIT_V ;
+      # Le placement left du trait, en fonction de fils unique ou 
+      # non et si fils unique si 1) non marié, 2) mari (ou assimilée) 
+      # 3) femme (ou assimilée)
+      left_sub = left_main + case true
+        when enfant_unique 
+          child = mari.enfants.first
+          case true 
+          when child.is_single? then width_main / 2
+          when child.is_mari?   then 0
+          when child.is_femme?  then width_main + 2
+          else raise "Ce cas ne devrait jamais survenir."
+          end
+        else width_main / 2
+        end
       traits << TEMP_DEMITRAIT_VERT_EPOUX % [
         ghosted, 
         top_sub,
-        left_main + width_main / 2,
+        left_sub,
         height_sub
       ]
     end
